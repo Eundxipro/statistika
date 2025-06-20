@@ -3,572 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisis Regresi dan Korelasi Soal 1</title>
+    <title>Berita Terkini: Kisah Romansa Kampus</title>
+    <!-- Tailwind CSS CDN untuk styling yang cepat dan responsif -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* Mengatur font global ke Inter */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8;
-            color: #333;
+            background-color: #f0f4f8; /* Warna latar belakang yang lembut */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Pastikan menempati seluruh tinggi viewport */
+            margin: 0;
+            padding: 20px; /* Padding untuk responsivitas */
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 1.5rem;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-        h1, h2 {
-            color: #2c3e50;
-            font-weight: 700;
-        }
-        table {
+        .video-container {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-        th, td {
-            padding: 0.75rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        th {
-            background-color: #e0f2f7;
-            font-weight: 600;
-            color: #2980b9;
-        }
-        td {
+            max-width: 800px; /* Lebar maksimum untuk kontainer video */
             background-color: #ffffff;
+            border-radius: 12px; /* Sudut membulat */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Bayangan lembut */
+            overflow: hidden; /* Pastikan sudut membulat diterapkan dengan benar */
+            padding: 20px;
         }
-        tr:hover td {
-            background-color: #f7fafc;
+        video {
+            width: 100%;
+            height: auto; /* Memastikan video tetap proporsional */
+            border-radius: 8px; /* Sudut membulat untuk elemen video */
         }
-        .section-title {
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 0.5rem;
+        h1 {
+            color: #2c3e50; /* Warna judul yang gelap */
         }
-        .calculation-box {
-            background-color: #ecf0f1;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-family: 'Courier New', Courier, monospace;
-            white-space: pre-wrap; /* Ensures line breaks are respected */
+        p {
+            color: #555; /* Warna teks yang lebih lembut */
         }
-        .highlight {
-            background-color: #d1ecf1;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        canvas {
-            background-color: #fff;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            max-width: 100%;
-            height: auto; /* Make canvas responsive */
-        }
-        .result-box {
-            background-color: #e8f5e9; /* Light green for results */
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            font-weight: 500;
-            color: #27ae60;
-        }
-        .error-message {
-            background-color: #ffebee; /* Light red for errors */
-            color: #c0392b;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            font-weight: 500;
+        .news-meta {
+            font-size: 0.9em;
+            color: #95a5a6;
+            margin-bottom: 10px;
         }
     </style>
 </head>
-<body class="p-4">
-    <div class="container">
-        <h1 class="text-3xl text-center mb-6">Analisis Regresi Soal 1: Pengaruh Dosis Mikorisa terhadap Berat Biji Kering Panen Kedelai</h1>
-
-        <div class="section-title">Data Rata-rata Hasil Pengamatan</div>
-        <table id="data-table">
-            <thead>
-                <tr>
-                    <th>Dosis Spora Mikorisa (X)</th>
-                    <th>Rata-rata Berat Biji Kering Panen (Y)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data will be inserted here by JavaScript -->
-            </tbody>
-        </table>
-
-        <div class="section-title">Perhitungan Awal (Tabel Bantu)</div>
-        <div class="calculation-box">
-            <pre id="tabel-bantu-output"></pre>
+<body>
+    <div class="video-container">
+        <h1 class="text-3xl font-bold text-center mb-4">Momen Manis Sepulang Kuliah: Kisah Romansa Mahasiswa yang Terabadikan</h1>
+        <div class="news-meta text-center mb-6">
+            <p>20 Juni 2025 | Reporter Kampus: Eundxipro</p>
         </div>
-
-        <div class="section-title">Koefisien Regresi (a dan b)</div>
-        <div class="calculation-box">
-            <p>Rumus koefisien regresi ($b$):</p>
-            <p class="text-blue-700">$$b = \frac{n(\Sigma XY) - (\Sigma X)(\Sigma Y)}{n(\Sigma X^2) - (\Sigma X)^2}$$</p>
-            <p>Rumus intersep ($a$):</p>
-            <p class="text-blue-700">$$a = \bar{Y} - b\bar{X}$$</p>
-            <pre id="koefisien-regresi-output"></pre>
-        </div>
-        <div class="result-box">
-            <p id="persamaan-regresi"></p>
-        </div>
-
-        <div class="section-title">Grafik Garis Regresi</div>
-        <canvas id="regresiChart"></canvas>
-
-        <div class="section-title">Interpolasi dan Ekstrapolasi</div>
-        <div class="result-box">
-            <p><strong>Interpolasi pada dosis 60 spora mikorisa:</strong></p>
-            <p id="interpolasi-60"></p>
-            <p><strong>Interpolasi pada dosis 110 spora mikorisa:</strong></p>
-            <p id="interpolasi-110"></p>
-            <p><strong>Ekstrapolasi pada dosis 150 spora mikorisa:</strong></p>
-            <p id="ekstrapolasi-150"></p>
-        </div>
-
-        <div class="section-title">Uji Ragam Garis Regresi (Uji F)</div>
-        <div class="calculation-box">
-            <pre id="uji-f-output"></pre>
-        </div>
-        <table id="anova-table">
-            <thead>
-                <tr>
-                    <th>Sumber Keragaman (SK)</th>
-                    <th>Derajat Bebas (DB)</th>
-                    <th>Jumlah Kuadrat (JK)</th>
-                    <th>Kuadrat Tengah (KT)</th>
-                    <th>F Hitung</th>
-                    <th>F Tabel (5%)</th>
-                    <th>F Tabel (1%)</th>
-                    <th>Kesimpulan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- ANOVA table data will be inserted here -->
-            </tbody>
-        </table>
-        <div class="result-box mt-4" id="kesimpulan-uji-f"></div>
-
-        <div class="section-title">Uji Koefisien Garis Regresi (Uji t)</div>
-        <div class="calculation-box">
-            <pre id="uji-t-output"></pre>
-        </div>
-        <table id="uji-t-table">
-            <thead>
-                <tr>
-                    <th>Koefisien</th>
-                    <th>Nilai</th>
-                    <th>Standar Error (S)</th>
-                    <th>T Hitung</th>
-                    <th>T Tabel (5%)</th>
-                    <th>T Tabel (1%)</th>
-                    <th>Kesimpulan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Uji t table data will be inserted here -->
-            </tbody>
-        </table>
-        <div class="result-box mt-4" id="kesimpulan-uji-t"></div>
-
-        <div class="section-title">Uji Keeratan Hubungan (Koefisien Korelasi r dan Koefisien Determinasi r²)</div>
-        <div class="calculation-box">
-            <pre id="uji-keeratan-output"></pre>
-        </div>
-        <div class="result-box">
-            <p id="koefisien-korelasi"></p>
-            <p id="koefisien-determinasi"></p>
-            <p id="interpretasi-korelasi"></p>
-        </div>
-
-        <div class="section-title">Kesimpulan Akhir Soal 1</div>
-        <div class="result-box">
-            <p id="kesimpulan-akhir"></p>
+        <p class="text-center text-lg mb-8 leading-relaxed">
+            Sebuah pemandangan romantis terekam kamera saat dua sosok mahasiswa/i Universitas ABC (nama universitas dapat disesuaikan) terlihat berbagi momen penuh kasih sepulang dari kegiatan perkuliahan. Video ini menangkap kehangatan interaksi mereka, berjalan beriringan dengan senyum dan tawa, seolah melengkapi indahnya sore di area kampus.
+            Kejadian ini mengingatkan kita bahwa di tengah kesibukan akademik, cinta dan persahabatan juga turut mewarnai perjalanan pendidikan mereka.
+        </p>
+        <video controls class="w-full rounded-lg shadow-md">
+            <!-- URL video dari GitHub yang Anda berikan -->
+            <source src="https://github.com/Eundxipro/statistika/blob/main/WhatsApp%20Video%202025-06-20%20at%2018.46.38.mp4?raw=true" type="video/mp4">
+            <!-- Pesan fallback jika browser tidak mendukung tag video -->
+            Browser Anda tidak mendukung tag video.
+        </video>
+        <div class="mt-8 text-center text-sm text-gray-500">
+            <p>Video ini diabadikan dari momen tak terduga. Judul dan deskripsi dapat disesuaikan lebih lanjut.</p>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const data = [
-                { X: 0, Y: 6.093 },
-                { X: 25, Y: 7.610 },
-                { X: 50, Y: 9.307 },
-                { X: 75, Y: 11.420 },
-                { X: 100, Y: 13.257 },
-                { X: 125, Y: 14.843 }
-            ];
-
-            let n = data.length;
-            let sumX = 0;
-            let sumY = 0;
-            let sumX2 = 0;
-            let sumY2 = 0;
-            let sumXY = 0;
-
-            let tableRows = '';
-            let tabelBantuOutput = 'Tabel Bantu:\n';
-            tabelBantuOutput += 'No.\tX\tY\tX^2\tY^2\tXY\n';
-
-            data.forEach((row, index) => {
-                sumX += row.X;
-                sumY += row.Y;
-                sumX2 += (row.X * row.X);
-                sumY2 += (row.Y * row.Y);
-                sumXY += (row.X * row.Y);
-
-                tableRows += `
-                    <tr>
-                        <td>${row.X}</td>
-                        <td>${row.Y.toFixed(3)}</td>
-                    </tr>
-                `;
-                tabelBantuOutput += `${index + 1}\t${row.X}\t${row.Y.toFixed(3)}\t${(row.X * row.X).toFixed(3)}\t${(row.Y * row.Y).toFixed(3)}\t${(row.X * row.Y).toFixed(3)}\n`;
-            });
-
-            tabelBantuOutput += `\nSigma (Σ):\n`;
-            tabelBantuOutput += `ΣX = ${sumX}\n`;
-            tabelBantuOutput += `ΣY = ${sumY.toFixed(3)}\n`;
-            tabelBantuOutput += `ΣX^2 = ${sumX2}\n`;
-            tabelBantuOutput += `ΣY^2 = ${sumY2.toFixed(3)}\n`;
-            tabelBantuOutput += `ΣXY = ${sumXY.toFixed(3)}\n`;
-            tabelBantuOutput += `n = ${n}\n`;
-
-            document.getElementById('data-table').getElementsByTagName('tbody')[0].innerHTML = tableRows;
-            document.getElementById('tabel-bantu-output').textContent = tabelBantuOutput;
-
-            // Hitung koefisien regresi (a dan b)
-            let b = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-            let meanX = sumX / n;
-            let meanY = sumY / n;
-            let a = meanY - b * meanX;
-
-            const koefisienRegresiOutput = `
-                Perhitungan b:
-                b = (${n} * ${sumXY.toFixed(3)} - ${sumX} * ${sumY.toFixed(3)}) / (${n} * ${sumX2} - ${sumX}^2)
-                b = (${(n * sumXY).toFixed(3)} - ${(sumX * sumY).toFixed(3)}) / (${(n * sumX2).toFixed(3)} - ${(sumX * sumX).toFixed(3)})
-                b = ${( (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) ).toFixed(4)}
-
-                Perhitungan a:
-                Mean X (X̄) = ${meanX.toFixed(3)}
-                Mean Y (Ȳ) = ${meanY.toFixed(3)}
-                a = Ȳ - bX̄
-                a = ${meanY.toFixed(3)} - ${b.toFixed(4)} * ${meanX.toFixed(3)}
-                a = ${a.toFixed(4)}
-            `;
-            document.getElementById('koefisien-regresi-output').textContent = koefisienRegresiOutput;
-            document.getElementById('persamaan-regresi').textContent = `Persamaan Garis Regresi: Y = ${a.toFixed(4)} + ${b.toFixed(4)}X`;
-
-            // Grafik Garis Regresi
-            const labels = data.map(row => row.X);
-            const dataPoints = data.map(row => row.Y);
-            const regresiLineData = labels.map(x => a + b * x);
-
-            const ctx = document.getElementById('regresiChart').getContext('2d');
-            const regresiChart = new Chart(ctx, {
-                type: 'scatter',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Data Pengamatan',
-                        data: data.map(row => ({ x: row.X, y: row.Y })),
-                        backgroundColor: 'rgba(52, 152, 219, 0.8)',
-                        pointRadius: 6,
-                        pointHoverRadius: 8
-                    }, {
-                        label: 'Garis Regresi',
-                        data: labels.map((x, index) => ({ x: x, y: regresiLineData[index] })),
-                        type: 'line',
-                        borderColor: 'rgba(46, 204, 113, 1)',
-                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                        borderWidth: 2,
-                        fill: false,
-                        pointRadius: 0 // Hide points on the line
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            position: 'bottom',
-                            title: {
-                                display: true,
-                                text: 'Dosis Spora Mikorisa (X)'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Berat Biji Kering Panen (Y)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Garis Regresi Pengaruh Dosis Mikorisa terhadap Berat Biji Kering Panen'
-                        }
-                    }
-                }
-            });
-
-            // Interpolasi dan Ekstrapolasi
-            const interpolasi60 = a + b * 60;
-            const interpolasi110 = a + b * 110;
-            const ekstrapolasi150 = a + b * 150;
-
-            document.getElementById('interpolasi-60').textContent = `Y (dosis 60) = ${a.toFixed(4)} + ${b.toFixed(4)} * 60 = ${interpolasi60.toFixed(3)} g/tanaman`;
-            document.getElementById('interpolasi-110').textContent = `Y (dosis 110) = ${a.toFixed(4)} + ${b.toFixed(4)} * 110 = ${interpolasi110.toFixed(3)} g/tanaman`;
-            document.getElementById('ekstrapolasi-150').textContent = `Y (dosis 150) = ${a.toFixed(4)} + ${b.toFixed(4)} * 150 = ${ekstrapolasi150.toFixed(3)} g/tanaman`;
-
-            // Uji Ragam Garis Regresi (Uji F)
-            const JKTot_Y_numerator = sumY2 - (sumY * sumY) / n; // JK Total
-            const JKReg_numerator = (sumXY - (sumX * sumY) / n); // JP XY
-            const JXX_numerator = sumX2 - (sumX * sumX) / n; // JK X
-            
-            // From provided formula: JK Regresi = b * JP XY
-            const JKReg = b * JKReg_numerator;
-            const JKRes = JKTot_Y_numerator - JKReg; // JK Acak (Residual)
-
-            const DBReg = 1;
-            const DBRes = n - 2; // n - jumlah koefisien (a dan b)
-
-            const KTReg = JKReg / DBReg;
-            const KTRes = JKRes / DBRes;
-
-            const FHitung = KTReg / KTRes;
-
-            // F Tabel (untuk DB pembilang = 1, DB penyebut = n-2)
-            // F(1, 4) untuk 5% = 7.71 (approx from F-table for alpha 0.05, df1=1, df2=4)
-            // F(1, 4) untuk 1% = 21.20 (approx from F-table for alpha 0.01, df1=1, df2=4)
-            // Note: In real-world, exact F-table values should be looked up or computed with statistical software.
-            const FTabel5 = 7.71; 
-            const FTabel1 = 21.20;
-
-            let kesimpulanUjiF = "";
-            if (FHitung > FTabel1) {
-                kesimpulanUjiF = "Sangat Nyata (P < 0.01). Terdapat hubungan linier yang sangat signifikan antara Dosis Mikorisa dan Berat Biji Kering Panen.";
-            } else if (FHitung > FTabel5) {
-                kesimpulanUjiF = "Nyata (P < 0.05). Terdapat hubungan linier yang signifikan antara Dosis Mikorisa dan Berat Biji Kering Panen.";
-            } else {
-                kesimpulanUjiF = "Tidak Nyata. Tidak terdapat hubungan linier yang signifikan antara Dosis Mikorisa dan Berat Biji Kering Panen.";
-            }
-
-            const ujiFOutput = `
-                Perhitungan JK (Jumlah Kuadrat):
-                JK Total (JK_Y) = ΣY^2 - (ΣY)^2 / n
-                                = ${sumY2.toFixed(3)} - (${sumY.toFixed(3)})^2 / ${n}
-                                = ${JKTot_Y_numerator.toFixed(3)}
-
-                JK Regresi = b * (ΣXY - (ΣX)(ΣY) / n)
-                           = ${b.toFixed(4)} * (${sumXY.toFixed(3)} - (${sumX})(${sumY.toFixed(3)}) / ${n})
-                           = ${JKReg.toFixed(3)}
-
-                JK Residu (Acak) = JK Total - JK Regresi
-                                 = ${JKTot_Y_numerator.toFixed(3)} - ${JKReg.toFixed(3)}
-                                 = ${JKRes.toFixed(3)}
-
-                Perhitungan KT (Kuadrat Tengah):
-                KT Regresi = JK Regresi / DB Regresi = ${JKReg.toFixed(3)} / ${DBReg} = ${KTReg.toFixed(3)}
-                KT Residu = JK Residu / DB Residu = ${JKRes.toFixed(3)} / ${DBRes} = ${KTRes.toFixed(3)}
-
-                Perhitungan F Hitung:
-                F Hitung = KT Regresi / KT Residu
-                         = ${KTReg.toFixed(3)} / ${KTRes.toFixed(3)}
-                         = ${FHitung.toFixed(3)}
-            `;
-            document.getElementById('uji-f-output').textContent = ujiFOutput;
-
-            const anovaTableBody = document.getElementById('anova-table').getElementsByTagName('tbody')[0];
-            anovaTableBody.innerHTML = `
-                <tr>
-                    <td>Regresi</td>
-                    <td>${DBReg}</td>
-                    <td>${JKReg.toFixed(3)}</td>
-                    <td>${KTReg.toFixed(3)}</td>
-                    <td>${FHitung.toFixed(3)}</td>
-                    <td>${FTabel5.toFixed(2)}</td>
-                    <td>${FTabel1.toFixed(2)}</td>
-                    <td>${FHitung > FTabel1 ? '**' : (FHitung > FTabel5 ? '*' : 'ns')}</td>
-                </tr>
-                <tr>
-                    <td>Acak (Residu)</td>
-                    <td>${DBRes}</td>
-                    <td>${JKRes.toFixed(3)}</td>
-                    <td>${KTRes.toFixed(3)}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Total</td>
-                    <td>${n - 1}</td>
-                    <td>${JKTot_Y_numerator.toFixed(3)}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            `;
-            document.getElementById('kesimpulan-uji-f').textContent = `Kesimpulan Uji F: ${kesimpulanUjiF}`;
-
-            // Uji Koefisien Garis Regresi (Uji t)
-            // Standard Error of a (Sa)
-            const Sa = Math.sqrt(KTRes * sumX2 / (n * JXX_numerator));
-
-            // Standard Error of b (Sb)
-            const Sb = Math.sqrt(KTRes / JXX_numerator);
-
-            // T Hitung for a
-            const tHitung_a = a / Sa;
-            // T Hitung for b
-            const tHitung_b = b / Sb;
-
-            // T Tabel (untuk DB = n-2 = 4)
-            // T(4) untuk 5% (two-tailed) = 2.776
-            // T(4) untuk 1% (two-tailed) = 4.604
-            const tTabel5 = 2.776;
-            const tTabel1 = 4.604;
-
-            let kesimpulan_a = "";
-            if (Math.abs(tHitung_a) > tTabel1) {
-                kesimpulan_a = "Sangat Nyata (P < 0.01)";
-            } else if (Math.abs(tHitung_a) > tTabel5) {
-                kesimpulan_a = "Nyata (P < 0.05)";
-            } else {
-                kesimpulan_a = "Tidak Nyata";
-            }
-
-            let kesimpulan_b = "";
-            if (Math.abs(tHitung_b) > tTabel1) {
-                kesimpulan_b = "Sangat Nyata (P < 0.01)";
-            } else if (Math.abs(tHitung_b) > tTabel5) {
-                kesimpulan_b = "Nyata (P < 0.05)";
-            } else {
-                kesimpulan_b = "Tidak Nyata";
-            }
-
-            const ujiTOutput = `
-                Perhitungan Standard Error (S):
-                S_a = sqrt(KT Residu * ΣX^2 / (n * JK_X))
-                    = sqrt(${KTRes.toFixed(3)} * ${sumX2} / (${n} * ${JXX_numerator.toFixed(3)}))
-                    = ${Sa.toFixed(3)}
-
-                S_b = sqrt(KT Residu / JK_X)
-                    = sqrt(${KTRes.toFixed(3)} / ${JXX_numerator.toFixed(3)})
-                    = ${Sb.toFixed(3)}
-
-                Perhitungan T Hitung:
-                T Hitung (a) = a / S_a = ${a.toFixed(4)} / ${Sa.toFixed(3)} = ${tHitung_a.toFixed(3)}
-                T Hitung (b) = b / S_b = ${b.toFixed(4)} / ${Sb.toFixed(3)} = ${tHitung_b.toFixed(3)}
-            `;
-            document.getElementById('uji-t-output').textContent = ujiTOutput;
-
-            const ujiTTableBody = document.getElementById('uji-t-table').getElementsByTagName('tbody')[0];
-            ujiTTableBody.innerHTML = `
-                <tr>
-                    <td>Intersep (a)</td>
-                    <td>${a.toFixed(4)}</td>
-                    <td>${Sa.toFixed(3)}</td>
-                    <td>${tHitung_a.toFixed(3)}</td>
-                    <td>${tTabel5.toFixed(3)}</td>
-                    <td>${tTabel1.toFixed(3)}</td>
-                    <td>${kesimpulan_a}</td>
-                </tr>
-                <tr>
-                    <td>Koefisien (b)</td>
-                    <td>${b.toFixed(4)}</td>
-                    <td>${Sb.toFixed(3)}</td>
-                    <td>${tHitung_b.toFixed(3)}</td>
-                    <td>${tTabel5.toFixed(3)}</td>
-                    <td>${tTabel1.toFixed(3)}</td>
-                    <td>${kesimpulan_b}</td>
-                </tr>
-            `;
-
-            let kesimpulanUjiT = "";
-            if (Math.abs(tHitung_b) > tTabel1) {
-                kesimpulanUjiT = "Koefisien regresi (b) sangat nyata (P < 0.01), menunjukkan bahwa Dosis Mikorisa memiliki pengaruh yang sangat signifikan terhadap Berat Biji Kering Panen Kedelai.";
-            } else if (Math.abs(tHitung_b) > tTabel5) {
-                kesimpulanUjiT = "Koefisien regresi (b) nyata (P < 0.05), menunjukkan bahwa Dosis Mikorisa memiliki pengaruh yang signifikan terhadap Berat Biji Kering Panen Kedelai.";
-            } else {
-                kesimpulanUjiT = "Koefisien regresi (b) tidak nyata, menunjukkan bahwa Dosis Mikorisa tidak memiliki pengaruh yang signifikan terhadap Berat Biji Kering Panen Kedelai.";
-            }
-            if (Math.abs(tHitung_a) > tTabel1) {
-                kesimpulanUjiT += " Intersep (a) juga sangat nyata (P < 0.01).";
-            } else if (Math.abs(tHitung_a) > tTabel5) {
-                kesimpulanUjiT += " Intersep (a) juga nyata (P < 0.05).";
-            } else {
-                kesimpulanUjiT += " Intersep (a) tidak nyata.";
-            }
-            document.getElementById('kesimpulan-uji-t').textContent = `Kesimpulan Uji t: ${kesimpulanUjiT}`;
-
-            // Uji Keeratan Hubungan (Koefisien Korelasi r dan Koefisien Determinasi r²)
-            const r_numerator = (n * sumXY) - (sumX * sumY);
-            const r_denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
-            const r = r_numerator / r_denominator;
-            const r_squared = r * r;
-
-            const ujiKeeratanOutput = `
-                Perhitungan Koefisien Korelasi (r):
-                r = [n(ΣXY) - (ΣX)(ΣY)] / sqrt([n(ΣX^2) - (ΣX)^2][n(ΣY^2) - (ΣY)^2])
-                r = [${n}(${sumXY.toFixed(3)}) - (${sumX})(${sumY.toFixed(3)})] / sqrt([${n}(${sumX2}) - (${sumX})^2][${n}(${sumY2.toFixed(3)}) - (${sumY.toFixed(3)})^2])
-                r = ${r.toFixed(4)}
-
-                Perhitungan Koefisien Determinasi (r²):
-                r² = r * r = ${r.toFixed(4)} * ${r.toFixed(4)} = ${r_squared.toFixed(4)}
-            `;
-            document.getElementById('uji-keeratan-output').textContent = ujiKeeratanOutput;
-
-            document.getElementById('koefisien-korelasi').textContent = `Koefisien Korelasi (r) = ${r.toFixed(4)}`;
-            document.getElementById('koefisien-determinasi').textContent = `Koefisien Determinasi (r²) = ${r_squared.toFixed(4)} atau ${(r_squared * 100).toFixed(2)}%`;
-
-            let interpretasiKorelasi = "";
-            if (Math.abs(r) > 0.8) {
-                interpretasiKorelasi = "Hubungan sangat kuat.";
-            } else if (Math.abs(r) > 0.4) {
-                interpretasiKorelasi = "Hubungan sedang.";
-            } else {
-                interpretasiKorelasi = "Hubungan lemah.";
-            }
-            if (r > 0) {
-                interpretasiKorelasi += " Arah hubungan positif (searah).";
-            } else if (r < 0) {
-                interpretasiKorelasi += " Arah hubungan negatif (berlawanan arah).";
-            } else {
-                interpretasiKorelasi += " Tidak ada hubungan linier.";
-            }
-            document.getElementById('interpretasi-korelasi').textContent = `Interpretasi: ${interpretasiKorelasi} Ini berarti sekitar ${(r_squared * 100).toFixed(2)}% variasi Berat Biji Kering Panen dapat dijelaskan oleh variasi Dosis Spora Mikorisa.`;
-
-            // Kesimpulan Akhir
-            const kesimpulanAkhir = `
-                Dari analisis yang telah dilakukan:
-                1.  **Persamaan Regresi:** Diperoleh persamaan garis regresi <span class="highlight">Y = ${a.toFixed(4)} + ${b.toFixed(4)}X</span>, yang menunjukkan bahwa setiap peningkatan 1 unit dosis spora mikorisa, berat biji kering panen kedelai rata-rata akan meningkat sebesar ${b.toFixed(4)} g/tanaman.
-                2.  **Uji Ragam Garis Regresi (Uji F):** F Hitung (${FHitung.toFixed(3)}) ${FHitung > FTabel1 ? 'lebih besar dari F Tabel 1% (' + FTabel1.toFixed(2) + ')' : (FHitung > FTabel5 ? 'lebih besar dari F Tabel 5% (' + FTabel5.toFixed(2) + ')' : 'lebih kecil dari F Tabel 5% (' + FTabel5.toFixed(2) + ')')}. Ini menunjukkan bahwa hubungan linier antara dosis mikorisa dan berat biji kering panen adalah <span class="highlight">${FHitung > FTabel1 ? 'sangat nyata' : (FHitung > FTabel5 ? 'nyata' : 'tidak nyata')}</span>.
-                3.  **Uji Koefisien Garis Regresi (Uji t):** Nilai T Hitung untuk koefisien 'b' (${tHitung_b.toFixed(3)}) ${Math.abs(tHitung_b) > tTabel1 ? 'lebih besar dari T Tabel 1% (' + tTabel1.toFixed(3) + ')' : (Math.abs(tHitung_b) > tTabel5 ? 'lebih besar dari T Tabel 5% (' + tTabel5.toFixed(3) + ')' : 'lebih kecil dari T Tabel 5% (' + tTabel5.toFixed(3) + ')')}. Ini mengindikasikan bahwa koefisien regresi 'b' adalah <span class="highlight">${Math.abs(tHitung_b) > tTabel1 ? 'sangat nyata' : (Math.abs(tHitung_b) > tTabel5 ? 'nyata' : 'tidak nyata')}</span>, yang berarti dosis mikorisa berpengaruh signifikan terhadap berat biji kering panen.
-                4.  **Uji Keeratan Hubungan:** Koefisien Korelasi (r) adalah <span class="highlight">${r.toFixed(4)}</span>, menunjukkan hubungan positif yang <span class="highlight">${interpretasiKorelasi.toLowerCase().split('.')[0]}</span> antara dosis mikorisa dan berat biji kering panen. Koefisien Determinasi (r²) adalah <span class="highlight">${r_squared.toFixed(4)}</span> atau <span class="highlight">${(r_squared * 100).toFixed(2)}%</span>, yang berarti ${(r_squared * 100).toFixed(2)}% variasi berat biji kering panen dapat dijelaskan oleh dosis spora mikorisa.
-                5.  **Interpolasi dan Ekstrapolasi:** Perkiraan berat biji kering panen pada dosis 60, 110, dan 150 spora mikorisa telah dihitung, menunjukkan kemampuan model untuk menaksir nilai dalam dan di luar rentang data percobaan.
-            `;
-            document.getElementById('kesimpulan-akhir').innerHTML = kesimpulanAkhir;
-        });
-    </script>
 </body>
 </html>
