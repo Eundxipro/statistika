@@ -108,7 +108,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Data will be inserted here by JavaScript -->
+                <!-- Data akan dimasukkan di sini oleh JavaScript -->
             </tbody>
         </table>
 
@@ -160,7 +160,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- ANOVA table data will be inserted here -->
+                <!-- Data tabel ANOVA akan dimasukkan di sini -->
             </tbody>
         </table>
         <div class="result-box mt-4" id="kesimpulan-uji-f"></div>
@@ -182,7 +182,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Uji t table data will be inserted here -->
+                <!-- Data tabel Uji t akan dimasukkan di sini -->
             </tbody>
         </table>
         <div class="result-box mt-4" id="kesimpulan-uji-t"></div>
@@ -205,6 +205,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Data pengamatan
             const data = [
                 { X: 0, Y: 6.093 },
                 { X: 25, Y: 7.610 },
@@ -217,10 +218,11 @@
             let n = data.length;
             let sumX = 0;
             let sumY = 0;
-            let sumX2 = 0;
-            let sumY2 = 0;
-            let sumXY = 0;
+            let sumX2 = 0; // Sum of X squared
+            let sumY2 = 0; // Sum of Y squared
+            let sumXY = 0; // Sum of X times Y
 
+            // Populate data table and calculate initial sums
             let tableRows = '';
             let tabelBantuOutput = 'Tabel Bantu:\n';
             tabelBantuOutput += 'No.\tX\tY\tX^2\tY^2\tXY\n';
@@ -252,17 +254,31 @@
             document.getElementById('data-table').getElementsByTagName('tbody')[0].innerHTML = tableRows;
             document.getElementById('tabel-bantu-output').textContent = tabelBantuOutput;
 
-            // Hitung koefisien regresi (a dan b)
-            let b = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+            // Calculate regression coefficients (a and b)
+            // b = [n(ΣXY) - (ΣX)(ΣY)] / [n(ΣX^2) - (ΣX)^2]
+            const numeratorB = (n * sumXY) - (sumX * sumY);
+            const denominatorB = (n * sumX2) - (sumX * sumX);
+            let b = 0;
+            if (denominatorB !== 0) { // Avoid division by zero
+                b = numeratorB / denominatorB;
+            } else {
+                console.error("Denominator for 'b' is zero. Cannot calculate 'b'.");
+                // Optionally display an error message on the page
+                document.getElementById('koefisien-regresi-output').textContent = "Error: Tidak dapat menghitung koefisien 'b' karena pembagi nol.";
+                return; // Stop further execution if b cannot be calculated
+            }
+            
             let meanX = sumX / n;
             let meanY = sumY / n;
+            // a = Ȳ - bX̄
             let a = meanY - b * meanX;
 
             const koefisienRegresiOutput = `
                 Perhitungan b:
+                b = (n * ΣXY - ΣX * ΣY) / (n * ΣX^2 - (ΣX)^2)
                 b = (${n} * ${sumXY.toFixed(3)} - ${sumX} * ${sumY.toFixed(3)}) / (${n} * ${sumX2} - ${sumX}^2)
                 b = (${(n * sumXY).toFixed(3)} - ${(sumX * sumY).toFixed(3)}) / (${(n * sumX2).toFixed(3)} - ${(sumX * sumX).toFixed(3)})
-                b = ${( (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX) ).toFixed(4)}
+                b = ${b.toFixed(4)}
 
                 Perhitungan a:
                 Mean X (X̄) = ${meanX.toFixed(3)}
@@ -274,7 +290,7 @@
             document.getElementById('koefisien-regresi-output').textContent = koefisienRegresiOutput;
             document.getElementById('persamaan-regresi').textContent = `Persamaan Garis Regresi: Y = ${a.toFixed(4)} + ${b.toFixed(4)}X`;
 
-            // Grafik Garis Regresi
+            // Regression Line Chart
             const labels = data.map(row => row.X);
             const dataPoints = data.map(row => row.Y);
             const regresiLineData = labels.map(x => a + b * x);
@@ -329,7 +345,7 @@
                 }
             });
 
-            // Interpolasi dan Ekstrapolasi
+            // Interpolation and Extrapolation
             const interpolasi60 = a + b * 60;
             const interpolasi110 = a + b * 110;
             const ekstrapolasi150 = a + b * 150;
@@ -338,27 +354,49 @@
             document.getElementById('interpolasi-110').textContent = `Y (dosis 110) = ${a.toFixed(4)} + ${b.toFixed(4)} * 110 = ${interpolasi110.toFixed(3)} g/tanaman`;
             document.getElementById('ekstrapolasi-150').textContent = `Y (dosis 150) = ${a.toFixed(4)} + ${b.toFixed(4)} * 150 = ${ekstrapolasi150.toFixed(3)} g/tanaman`;
 
-            // Uji Ragam Garis Regresi (Uji F)
-            const JKTot_Y_numerator = sumY2 - (sumY * sumY) / n; // JK Total
-            const JKReg_numerator = (sumXY - (sumX * sumY) / n); // JP XY
-            const JXX_numerator = sumX2 - (sumX * sumX) / n; // JK X
+            // Regression Variance Test (F-Test)
+            // JK Total (Total Sum of Squares of Y)
+            const JKTot_Y_numerator = sumY2 - (sumY * sumY) / n; 
+            // JP XY (Sum of Products of Deviations of X and Y)
+            const JPXY_numerator = sumXY - (sumX * sumY) / n; 
+            // JK X (Sum of Squares of X)
+            const JKX_numerator = sumX2 - (sumX * sumX) / n; 
             
-            // From provided formula: JK Regresi = b * JP XY
-            const JKReg = b * JKReg_numerator;
-            const JKRes = JKTot_Y_numerator - JKReg; // JK Acak (Residual)
+            // JK Regresi = b * JP XY
+            const JKReg = b * JPXY_numerator;
+            // JK Residual (Error Sum of Squares)
+            const JKRes = JKTot_Y_numerator - JKReg; 
 
-            const DBReg = 1;
-            const DBRes = n - 2; // n - jumlah koefisien (a dan b)
+            const DBReg = 1; // Degrees of freedom for regression
+            const DBRes = n - 2; // Degrees of freedom for residual (n - number of coefficients a and b)
 
-            const KTReg = JKReg / DBReg;
-            const KTRes = JKRes / DBRes;
+            let KTReg = 0;
+            if (DBReg !== 0) {
+                KTReg = JKReg / DBReg;
+            } else {
+                console.warn("DBReg is zero. KTReg will be zero.");
+            }
 
-            const FHitung = KTReg / KTRes;
+            let KTRes = 0;
+            if (DBRes !== 0) {
+                KTRes = JKRes / DBRes;
+            } else {
+                console.warn("DBRes is zero. KTRes will be zero. F-test might not be meaningful.");
+                // Provide a placeholder or error message if DBRes is too small for a meaningful F-test
+            }
+            
+            let FHitung = 0;
+            if (KTRes !== 0) { // Avoid division by zero
+                FHitung = KTReg / KTRes;
+            } else {
+                console.error("KTRes is zero. Cannot calculate F Hitung.");
+                // Optionally display an error message on the page
+            }
 
-            // F Tabel (untuk DB pembilang = 1, DB penyebut = n-2)
-            // F(1, 4) untuk 5% = 7.71 (approx from F-table for alpha 0.05, df1=1, df2=4)
-            // F(1, 4) untuk 1% = 21.20 (approx from F-table for alpha 0.01, df1=1, df2=4)
-            // Note: In real-world, exact F-table values should be looked up or computed with statistical software.
+            // Approximate F-Table values (for df1=1, df2=n-2)
+            // For n=6, df2=4
+            // F(1, 4) for 5% = 7.71 (approx)
+            // F(1, 4) for 1% = 21.20 (approx)
             const FTabel5 = 7.71; 
             const FTabel1 = 21.20;
 
@@ -430,21 +468,42 @@
             `;
             document.getElementById('kesimpulan-uji-f').textContent = `Kesimpulan Uji F: ${kesimpulanUjiF}`;
 
-            // Uji Koefisien Garis Regresi (Uji t)
-            // Standard Error of a (Sa)
-            const Sa = Math.sqrt(KTRes * sumX2 / (n * JXX_numerator));
+            // Regression Coefficient Test (t-Test)
+            // Standard Error of 'a' (Sa)
+            let Sa = 0;
+            if (n * JKX_numerator !== 0) { // Avoid division by zero
+                Sa = Math.sqrt(KTRes * sumX2 / (n * JKX_numerator));
+            } else {
+                console.error("Denominator for Sa is zero. Cannot calculate Sa.");
+            }
 
-            // Standard Error of b (Sb)
-            const Sb = Math.sqrt(KTRes / JXX_numerator);
+            // Standard Error of 'b' (Sb)
+            let Sb = 0;
+            if (JKX_numerator !== 0) { // Avoid division by zero
+                Sb = Math.sqrt(KTRes / JKX_numerator);
+            } else {
+                console.error("Denominator for Sb is zero. Cannot calculate Sb.");
+            }
 
             // T Hitung for a
-            const tHitung_a = a / Sa;
+            let tHitung_a = 0;
+            if (Sa !== 0) { // Avoid division by zero
+                tHitung_a = a / Sa;
+            } else {
+                console.error("Sa is zero. Cannot calculate tHitung_a.");
+            }
+            
             // T Hitung for b
-            const tHitung_b = b / Sb;
+            let tHitung_b = 0;
+            if (Sb !== 0) { // Avoid division by zero
+                tHitung_b = b / Sb;
+            } else {
+                console.error("Sb is zero. Cannot calculate tHitung_b.");
+            }
 
-            // T Tabel (untuk DB = n-2 = 4)
-            // T(4) untuk 5% (two-tailed) = 2.776
-            // T(4) untuk 1% (two-tailed) = 4.604
+            // Approximate T-Table values (for df = n-2 = 4, two-tailed)
+            // T(4) for 5% (two-tailed) = 2.776
+            // T(4) for 1% (two-tailed) = 4.604
             const tTabel5 = 2.776;
             const tTabel1 = 4.604;
 
@@ -469,11 +528,11 @@
             const ujiTOutput = `
                 Perhitungan Standard Error (S):
                 S_a = sqrt(KT Residu * ΣX^2 / (n * JK_X))
-                    = sqrt(${KTRes.toFixed(3)} * ${sumX2} / (${n} * ${JXX_numerator.toFixed(3)}))
+                    = sqrt(${KTRes.toFixed(3)} * ${sumX2} / (${n} * ${JKX_numerator.toFixed(3)}))
                     = ${Sa.toFixed(3)}
 
                 S_b = sqrt(KT Residu / JK_X)
-                    = sqrt(${KTRes.toFixed(3)} / ${JXX_numerator.toFixed(3)})
+                    = sqrt(${KTRes.toFixed(3)} / ${JKX_numerator.toFixed(3)})
                     = ${Sb.toFixed(3)}
 
                 Perhitungan T Hitung:
@@ -521,12 +580,25 @@
             }
             document.getElementById('kesimpulan-uji-t').textContent = `Kesimpulan Uji t: ${kesimpulanUjiT}`;
 
-            // Uji Keeratan Hubungan (Koefisien Korelasi r dan Koefisien Determinasi r²)
+            // Test of Correlation (Correlation Coefficient r and Coefficient of Determination r²)
             const r_numerator = (n * sumXY) - (sumX * sumY);
-            const r_denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
-            const r = r_numerator / r_denominator;
-            const r_squared = r * r;
+            const r_denominator_part1 = (n * sumX2 - sumX * sumX);
+            const r_denominator_part2 = (n * sumY2 - sumY * sumY);
+            let r = 0;
+            let r_squared = 0;
 
+            if (r_denominator_part1 > 0 && r_denominator_part2 > 0) { // Avoid taking sqrt of negative number
+                const r_denominator = Math.sqrt(r_denominator_part1 * r_denominator_part2);
+                if (r_denominator !== 0) { // Avoid division by zero
+                    r = r_numerator / r_denominator;
+                    r_squared = r * r;
+                } else {
+                    console.error("Denominator for 'r' is zero. Cannot calculate 'r'.");
+                }
+            } else {
+                console.error("One of the parts of the denominator for 'r' is non-positive. Cannot calculate 'r'.");
+            }
+            
             const ujiKeeratanOutput = `
                 Perhitungan Koefisien Korelasi (r):
                 r = [n(ΣXY) - (ΣX)(ΣY)] / sqrt([n(ΣX^2) - (ΣX)^2][n(ΣY^2) - (ΣY)^2])
@@ -543,12 +615,18 @@
 
             let interpretasiKorelasi = "";
             if (Math.abs(r) > 0.8) {
-                interpretasiKorelasi = "Hubungan sangat kuat.";
+                interpretasiKorelasi = "sangat kuat.";
+            } else if (Math.abs(r) > 0.6) { // Adjusted categories for better interpretation
+                interpretasiKorelasi = "kuat.";
             } else if (Math.abs(r) > 0.4) {
-                interpretasiKorelasi = "Hubungan sedang.";
-            } else {
-                interpretasiKorelasi = "Hubungan lemah.";
+                interpretasiKorelasi = "sedang.";
+            } else if (Math.abs(r) > 0.2) {
+                interpretasiKorelasi = "lemah.";
             }
+            else {
+                interpretasiKorelasi = "sangat lemah atau tidak ada.";
+            }
+
             if (r > 0) {
                 interpretasiKorelasi += " Arah hubungan positif (searah).";
             } else if (r < 0) {
@@ -556,15 +634,15 @@
             } else {
                 interpretasiKorelasi += " Tidak ada hubungan linier.";
             }
-            document.getElementById('interpretasi-korelasi').textContent = `Interpretasi: ${interpretasiKorelasi} Ini berarti sekitar ${(r_squared * 100).toFixed(2)}% variasi Berat Biji Kering Panen dapat dijelaskan oleh variasi Dosis Spora Mikorisa.`;
+            document.getElementById('interpretasi-korelasi').textContent = `Interpretasi: Hubungan ${interpretasiKorelasi} Ini berarti sekitar ${(r_squared * 100).toFixed(2)}% variasi Berat Biji Kering Panen dapat dijelaskan oleh variasi Dosis Spora Mikorisa.`;
 
-            // Kesimpulan Akhir
+            // Final Conclusion
             const kesimpulanAkhir = `
                 Dari analisis yang telah dilakukan:
                 1.  **Persamaan Regresi:** Diperoleh persamaan garis regresi <span class="highlight">Y = ${a.toFixed(4)} + ${b.toFixed(4)}X</span>, yang menunjukkan bahwa setiap peningkatan 1 unit dosis spora mikorisa, berat biji kering panen kedelai rata-rata akan meningkat sebesar ${b.toFixed(4)} g/tanaman.
                 2.  **Uji Ragam Garis Regresi (Uji F):** F Hitung (${FHitung.toFixed(3)}) ${FHitung > FTabel1 ? 'lebih besar dari F Tabel 1% (' + FTabel1.toFixed(2) + ')' : (FHitung > FTabel5 ? 'lebih besar dari F Tabel 5% (' + FTabel5.toFixed(2) + ')' : 'lebih kecil dari F Tabel 5% (' + FTabel5.toFixed(2) + ')')}. Ini menunjukkan bahwa hubungan linier antara dosis mikorisa dan berat biji kering panen adalah <span class="highlight">${FHitung > FTabel1 ? 'sangat nyata' : (FHitung > FTabel5 ? 'nyata' : 'tidak nyata')}</span>.
-                3.  **Uji Koefisien Garis Regresi (Uji t):** Nilai T Hitung untuk koefisien 'b' (${tHitung_b.toFixed(3)}) ${Math.abs(tHitung_b) > tTabel1 ? 'lebih besar dari T Tabel 1% (' + tTabel1.toFixed(3) + ')' : (Math.abs(tHitung_b) > tTabel5 ? 'lebih besar dari T Tabel 5% (' + tTabel5.toFixed(3) + ')' : 'lebih kecil dari T Tabel 5% (' + tTabel5.toFixed(3) + ')')}. Ini mengindikasikan bahwa koefisien regresi 'b' adalah <span class="highlight">${Math.abs(tHitung_b) > tTabel1 ? 'sangat nyata' : (Math.abs(tHitung_b) > tTabel5 ? 'nyata' : 'tidak nyata')}</span>, yang berarti dosis mikorisa berpengaruh signifikan terhadap berat biji kering panen.
-                4.  **Uji Keeratan Hubungan:** Koefisien Korelasi (r) adalah <span class="highlight">${r.toFixed(4)}</span>, menunjukkan hubungan positif yang <span class="highlight">${interpretasiKorelasi.toLowerCase().split('.')[0]}</span> antara dosis mikorisa dan berat biji kering panen. Koefisien Determinasi (r²) adalah <span class="highlight">${r_squared.toFixed(4)}</span> atau <span class="highlight">${(r_squared * 100).toFixed(2)}%</span>, yang berarti ${(r_squared * 100).toFixed(2)}% variasi berat biji kering panen dapat dijelaskan oleh dosis spora mikorisa.
+                3.  **Uji Koefisien Garis Regresi (Uji t):** Nilai T Hitung untuk koefisien 'b' (${Math.abs(tHitung_b).toFixed(3)}) ${Math.abs(tHitung_b) > tTabel1 ? 'lebih besar dari T Tabel 1% (' + tTabel1.toFixed(3) + ')' : (Math.abs(tHitung_b) > tTabel5 ? 'lebih besar dari T Tabel 5% (' + tTabel5.toFixed(3) + ')' : 'lebih kecil dari T Tabel 5% (' + tTabel5.toFixed(3) + ')')}. Ini mengindikasikan bahwa koefisien regresi 'b' adalah <span class="highlight">${Math.abs(tHitung_b) > tTabel1 ? 'sangat nyata' : (Math.abs(tHitung_b) > tTabel5 ? 'nyata' : 'tidak nyata')}</span>, yang berarti dosis mikorisa berpengaruh signifikan terhadap berat biji kering panen.
+                4.  **Uji Keeratan Hubungan:** Koefisien Korelasi (r) adalah <span class="highlight">${r.toFixed(4)}</span>, menunjukkan hubungan positif yang <span class="highlight">${interpretasiKorelasi.toLowerCase().split('arah hubungan positif')[0].trim()}</span> antara dosis mikorisa dan berat biji kering panen. Koefisien Determinasi (r²) adalah <span class="highlight">${r_squared.toFixed(4)}</span> atau <span class="highlight">${(r_squared * 100).toFixed(2)}%</span>, yang berarti ${(r_squared * 100).toFixed(2)}% variasi berat biji kering panen dapat dijelaskan oleh dosis spora mikorisa.
                 5.  **Interpolasi dan Ekstrapolasi:** Perkiraan berat biji kering panen pada dosis 60, 110, dan 150 spora mikorisa telah dihitung, menunjukkan kemampuan model untuk menaksir nilai dalam dan di luar rentang data percobaan.
             `;
             document.getElementById('kesimpulan-akhir').innerHTML = kesimpulanAkhir;
