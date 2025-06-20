@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisah Kampus: Jelajahi Fakta & Cerita Seru!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* CSS styles here */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="topicSelectionScreen" class="screen">
+            <div class="site-header">
+                <h1><i class="fas fa-graduation-cap" style="margin-right:10px;"></i>Kisah Kampus Kita</h1>
+                <p>Temukan cerita menarik, fakta unik, dan info penting seputar kehidupan mahasiswa di sini!</p>
+            </div>
+            <div id="topicGrid"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_lcZ-_2eDPcZ44efVhRRcOkJQamO4S5E",
+            authDomain: "funny-e436a.firebaseapp.com",
+            projectId: "funny-e436a",
+            storageBucket: "funny-e436a.firebasestorage.app",
+            messagingSenderId: "626813764903",
+            appId: "1:626813764903:web:73250f741ddaac3a555502",
+            measurementId: "G-MSSK2DD3SD"
+        };
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, orderBy, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        setLogLevel('error');
+
+        // Sign in anonymously
+        signInAnonymously(auth)
+            .then(() => {
+                console.log("User  signed in anonymously.");
+                // Load your content or perform other actions here
+            })
+            .catch((error) => {
+                console.error("Error signing in:", error);
+            });
+
+        // Your other JavaScript code here
+    </script>
+</body>
+</html>
