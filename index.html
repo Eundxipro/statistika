@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ringkasan Regresi Kuadratik</title>
+    <title>Dashboard Regresi & Korelasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -11,551 +11,111 @@
             font-family: 'Inter', sans-serif;
             background-color: #f0f4f8; /* Light blue-gray background */
             color: #334155; /* Dark slate gray text */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
         }
         .container {
             max-width: 960px;
-            margin: 0 auto;
             padding: 2rem;
+            text-align: center;
         }
         .card {
             background-color: #ffffff;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             padding: 2.5rem;
             margin-bottom: 2rem;
             transition: transform 0.3s ease-in-out;
         }
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
         }
         .section-title {
-            font-size: 2.25rem; /* 36px */
+            font-size: 2.5rem; /* 40px */
             font-weight: 700; /* Bold */
             color: #1e3a8a; /* Darker blue */
             margin-bottom: 1.5rem;
-            border-bottom: 3px solid #60a5fa; /* Blue accent underline */
-            padding-bottom: 0.5rem;
         }
-        .subsection-title {
+        .description {
+            font-size: 1.125rem; /* 18px */
+            color: #475569;
+            margin-bottom: 2rem;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .feature-card {
+            background-color: #e0f2fe; /* Lightest blue */
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #1e40af; /* Dark blue for text */
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            height: 100%; /* Ensure cards are same height */
+            justify-content: center; /* Center content vertically */
+        }
+        .feature-card:hover {
+            background-color: #bfdbfe; /* Lighter blue on hover */
+            transform: translateY(-5px);
+        }
+        .feature-card h3 {
             font-size: 1.75rem; /* 28px */
             font-weight: 600; /* Semi-bold */
-            color: #3b82f6; /* Medium blue */
-            margin-top: 1.5rem;
             margin-bottom: 1rem;
         }
-        .math-formula {
-            background-color: #e0f2fe; /* Lightest blue */
-            border-left: 5px solid #3b82f6; /* Blue border */
-            padding: 1rem 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif; /* Maintain Inter font */
-            font-size: 1.125rem; /* 18px */
-            color: #1e40af; /* Dark blue for formula */
-            overflow-x: auto; /* Allow horizontal scrolling for long formulas */
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
+        .feature-card p {
+            font-size: 1rem;
             margin-bottom: 1.5rem;
+            line-height: 1.5;
         }
-        th, td {
-            border: 1px solid #cbd5e1; /* Light gray border */
-            padding: 0.75rem;
-            text-align: left;
-        }
-        th {
-            background-color: #bfdbfe; /* Lighter blue for table headers */
-            font-weight: 600;
-            color: #1e40af; /* Dark blue for table header text */
-        }
-        td {
-            background-color: #eff6ff; /* Even lighter blue for table cells */
-        }
-        ul {
-            list-style-type: disc;
-            margin-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        li {
-            margin-bottom: 0.5rem;
-        }
-        .button-primary {
+        .feature-card .button {
             background-color: #3b82f6; /* Blue */
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
             font-weight: 600;
+            display: inline-block;
             transition: background-color 0.3s ease-in-out;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
         }
-        .button-primary:hover {
+        .feature-card .button:hover {
             background-color: #2563eb; /* Darker blue on hover */
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            box-sizing: border-box; /* Include padding in width */
-        }
-        .result-area p {
-            margin-bottom: 0.5rem;
-        }
-        .error-message {
-            color: #ef4444; /* Red color for error messages */
-            font-weight: 600;
-            margin-top: 1rem;
-        }
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: #64748b; /* Gray text */
-            font-size: 0.9rem;
-        }
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            height: 0;
-            overflow: hidden;
-            background-color: #cbd5e1; /* Placeholder background */
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-        .video-container iframe,
-        .video-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .video-placeholder {
-            display: flex;
-            flex-direction: column; /* Allow text stacking */
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            background-color: #e2e8f0;
-            color: #4a5568;
-            font-size: 1.2rem;
-            text-align: center;
-            padding: 1rem;
-            border-radius: 8px;
-        }
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            .section-title {
-                font-size: 1.75rem;
-            }
-            .subsection-title {
-                font-size: 1.5rem;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="text-center py-8">
-            <h1 class="text-5xl font-extrabold text-blue-900 leading-tight">Regresi Kuadratik</h1>
-            <p class="text-lg text-blue-700 mt-2">Memahami Metode Kuadrat Terkecil untuk Polinomial Orde 2</p>
-            <a href="#uji-coba-section" class="button-primary mt-6 inline-block">Mulai Uji Coba Regresi Anda</a>
-        </header>
+        <div class="card">
+            <h1 class="section-title">Selamat Datang di Portal Regresi & Korelasi</h1>
+            <p class="description">Pilih jenis analisis yang ingin Anda pelajari atau uji coba:</p>
 
-        <main>
-            <section class="card">
-                <h2 class="section-title">Video Pembahasan</h2>
-                <div class="video-container">
-                    <!-- Video from the provided GitHub raw link -->
-                    <video controls src="https://github.com/Eundxipro/statistika/raw/main/XIV.%20Video%20contoh%20Regresi%20Kuadratik%20Metode%20Kuadrat%20Terkecil%20(1).mp4">
-                        Browser Anda tidak mendukung tag video. Silakan unduh video untuk menontonnya:
-                        <a href="https://github.com/Eundxipro/statistika/raw/main/XIV.%20Video%20contoh%20Regresi%20Kuadratik%20Metode%20Kuadrat%20Terkecil%20(1).mp4">Unduh Video</a>
-                    </video>
-                </div>
-            </section>
+            <div class="grid-container">
+                <a href="quadratic-regression.html" class="feature-card">
+                    <h3>Regresi Kuadratik</h3>
+                    <p>Pelajari fungsi regresi polinomial orde 2 dan uji coba dengan data Anda sendiri.</p>
+                    <span class="button">Lihat Materi</span>
+                </a>
 
-            <section class="card">
-                <h2 class="section-title">Pendahuluan</h2>
-                <p class="text-lg">Regresi Kuadratik adalah metode regresi yang menggunakan fungsi polinomial orde 2 untuk memodelkan hubungan antara variabel independen ($x$) dan variabel dependen ($y$). Bentuk grafiknya menyerupai kurva parabola. Metode ini sangat berguna ketika data yang tersebar menunjukkan pola non-linear.</p>
-                <p class="mt-4 text-lg">Dalam video ini, kita mempelajari bagaimana menerapkan Metode Kuadrat Terkecil (Least-Square Method) untuk menemukan koefisien fungsi regresi kuadratik dan menghitung koefisien determinasi ($R^2$) yang menunjukkan seberapa baik model sesuai dengan data.</p>
-            </section>
-
-            <section class="card">
-                <h2 class="section-title">Fungsi Regresi Kuadratik</h2>
-                <p class="text-lg">Fungsi regresi kuadratik memiliki bentuk umum:</p>
-                <div class="math-formula">
-                    $$ \hat{y} = a + bx + cx^2 $$
-                </div>
-                <p class="text-lg">Di mana:
-                    <ul>
-                        <li>$\hat{y}$ adalah nilai $y$ yang diprediksi.</li>
-                        <li>$x$ adalah variabel independen.</li>
-                        <li>$a$, $b$, dan $c$ adalah koefisien regresi yang perlu dicari.</li>
-                    </ul>
-                </p>
-
-                <h3 class="subsection-title">Menemukan Koefisien dengan Metode Kuadrat Terkecil</h3>
-                <p class="text-lg">Koefisien $a$, $b$, dan $c$ dapat ditemukan dengan menyelesaikan sistem persamaan linear berikut dalam bentuk matriks:</p>
-                <div class="math-formula">
-                    $$
-                    \begin{bmatrix}
-                    n & \Sigma x & \Sigma x^2 \\
-                    \Sigma x & \Sigma x^2 & \Sigma x^3 \\
-                    \Sigma x^2 & \Sigma x^3 & \Sigma x^4
-                    \end{bmatrix}
-                    \begin{bmatrix}
-                    a \\
-                    b \\
-                    c
-                    \end{bmatrix}
-                    =
-                    \begin{bmatrix}
-                    \Sigma y \\
-                    \Sigma xy \\
-                    \Sigma x^2y
-                    \end{bmatrix}
-                    $$
-                </div>
-                <p class="text-lg">Di mana $n$ adalah jumlah titik data.</p>
-            </section>
-
-            <section class="card">
-                <h2 class="section-title">Koefisien Determinasi ($R^2$)</h2>
-                <p class="text-lg">Koefisien determinasi, dilambangkan dengan $R^2$ (atau $r^2$), adalah ukuran seberapa baik model regresi sesuai dengan data. Nilainya berkisar antara 0 dan 1.</p>
-                <p class="text-lg">Formulanya adalah:</p>
-                <div class="math-formula">
-                    $$ R^2 = 1 - \frac{\Sigma (y - \hat{y})^2}{\Sigma (y - \bar{y})^2} $$
-                </div>
-                <p class="text-lg">Di mana:
-                    <ul>
-                        <li>$\Sigma (y - \hat{y})^2$ adalah jumlah kuadrat sisaan (Sum of Squares of Residuals).</li>
-                        <li>$\Sigma (y - \bar{y})^2$ adalah jumlah kuadrat total (Total Sum of Squares), dengan $\bar{y}$ adalah rata-rata nilai $y$.</li>
-                    </ul>
-                </p>
-                <h3 class="subsection-title">Interpretasi Nilai $R^2$</h3>
-                <ul>
-                    <li><strong>$R^2 = 0$:</strong> Model regresi tidak menjelaskan variasi variabel $y$ sama sekali.</li>
-                    <li><strong>$R^2$ mendekati $0$:</strong> Model regresi hanya sedikit menjelaskan variasi variabel $y$.</li>
-                    <li><strong>$R^2$ mendekati $1$:</strong> Model regresi banyak menjelaskan variasi variabel $y$.</li>
-                    <li><strong>$R^2 = 1$:</strong> Model regresi secara tepat menjelaskan variasi variabel $y$.</li>
-                </ul>
-            </section>
-
-            <section class="card">
-                <h2 class="section-title">Contoh Soal dan Solusi</h2>
-                <p class="text-lg">Diberikan data berikut:</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>x</th>
-                            <th>y</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>0</td><td>2</td></tr>
-                        <tr><td>1</td><td>8</td></tr>
-                        <tr><td>2</td><td>14</td></tr>
-                        <tr><td>3</td><td>27</td></tr>
-                        <tr><td>4</td><td>41</td></tr>
-                        <tr><td>5</td><td>61</td></tr>
-                    </tbody>
-                </table>
-                <p class="text-lg"><strong>Tugas:</strong> Cari fungsi regresi kuadratik ($\hat{y}$) dan hitung nilai koefisien determinasi ($R^2$).</p>
-
-                <h3 class="subsection-title">Langkah-langkah Perhitungan:</h3>
-                <ol class="list-decimal ml-6 mt-4">
-                    <li>
-                        <p class="text-lg font-semibold">Menghitung Jumlah yang Diperlukan (dari Tabel):</p>
-                        <ul>
-                            <li>$n = 6$</li>
-                            <li>$\Sigma x = 15$</li>
-                            <li>$\Sigma y = 153$</li>
-                            <li>$\Sigma xy = 586$</li>
-                            <li>$\Sigma x^2 = 55$</li>
-                            <li>$\Sigma x^2y = 2.488$</li>
-                            <li>$\Sigma x^3 = 225$</li>
-                            <li>$\Sigma x^4 = 979$</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <p class="text-lg font-semibold">Memasukkan nilai ke Sistem Persamaan Linear:</p>
-                        <div class="math-formula">
-                            $$
-                            \begin{bmatrix}
-                            6 & 15 & 55 \\
-                            15 & 55 & 225 \\
-                            55 & 225 & 979
-                            \end{bmatrix}
-                            \begin{bmatrix}
-                            a \\
-                            b \\
-                            c
-                            \end{bmatrix}
-                            =
-                            \begin{bmatrix}
-                            153 \\
-                            586 \\
-                            2.488
-                            \end{bmatrix}
-                            $$
-                        </div>
-                    </li>
-                    <li>
-                        <p class="text-lg font-semibold">Menyelesaikan Sistem Persamaan Linear (menggunakan Aturan Cramer):</p>
-                        <ul>
-                            <li>$D = 3.920$</li>
-                            <li>$D_1 = 9.800$</li>
-                            <li>$D_2 = 9.884$</li>
-                            <li>$D_3 = 7.140$</li>
-                            <li>$a = D_1 / D = 9.800 / 3.920 = 2.5$</li>
-                            <li>$b = D_2 / D = 9.884 / 3.920 \approx 2.5214$</li>
-                            <li>$c = D_3 / D = 7.140 / 3.920 \approx 1.8214$</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <p class="text-lg font-semibold">Menyusun Fungsi Regresi Kuadratik:</p>
-                        <div class="math-formula">
-                            $$ \hat{y} = 2.5 + 2.5214x + 1.8214x^2 $$
-                        </div>
-                    </li>
-                    <li>
-                        <p class="text-lg font-semibold">Menghitung Koefisien Determinasi ($R^2$):</p>
-                        <ul>
-                            <li>$\Sigma (y - \hat{y})^2 = 3.2283$</li>
-                            <li>$\bar{y} = \Sigma y / n = 153 / 6 = 25.5$</li>
-                            <li>$\Sigma (y - \bar{y})^2 = 2493.5$</li>
-                            <li>$R^2 = 1 - (3.2283 / 2493.5) \approx 0.9987$</li>
-                        </ul>
-                    </li>
-                </ol>
-                <h3 class="subsection-title">Kesimpulan Contoh Soal:</h3>
-                <p class="text-lg">Fungsi regresi kuadratik yang diperoleh adalah $y\hat{} = 2.5 + 2.5214x + 1.8214x^2$.</p>
-                <p class="text-lg">Koefisien determinasi ($R^2$) adalah $0.9987$. Nilai ini sangat dekat dengan 1, menunjukkan bahwa model regresi ini sangat baik dalam menjelaskan variasi variabel $y$ dari data yang diberikan.</p>
-                <p class="mt-4 text-lg">Visualisasi data tersebar dan kurva regresi kuadratik akan menunjukkan kurva parabola yang melewati titik-titik data, mencerminkan kecocokan model yang tinggi.</p>
-            </section>
-
-            <section id="uji-coba-section" class="card">
-                <h2 class="section-title">Uji Coba Regresi Kuadratik Anda</h2>
-                <p class="text-lg mb-4">Masukkan data $X$ dan $Y$ Anda (pisahkan dengan koma), lalu klik "Hitung Regresi" untuk melihat proses perhitungan dan hasilnya.</p>
-                <div class="form-group">
-                    <label for="xValues">Nilai X (contoh: 0,1,2,3,4,5):</label>
-                    <textarea id="xValues" rows="3" placeholder="Masukkan nilai X dipisahkan dengan koma"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="yValues">Nilai Y (contoh: 2,8,14,27,41,61):</label>
-                    <textarea id="yValues" rows="3" placeholder="Masukkan nilai Y dipisahkan dengan koma"></textarea>
-                </div>
-                <button id="calculateRegression" class="button-primary">Hitung Regresi</button>
-                <div id="errorMessage" class="error-message hidden"></div>
-
-                <div id="results" class="result-area mt-8 border p-6 rounded-lg bg-blue-50 border-blue-200">
-                    <h3 class="subsection-title">Hasil Perhitungan:</h3>
-                    <p><strong>Jumlah Data (n):</strong> <span id="nResult"></span></p>
-                    <p><strong>Koefisien a:</strong> <span id="aResult"></span></p>
-                    <p><strong>Koefisien b:</strong> <span id="bResult"></span></p>
-                    <p><strong>Koefisien c:</strong> <span id="cResult"></span></p>
-                    <p><strong>Fungsi Regresi ($\hat{y}$):</strong> <span id="regressionEquation"></span></p>
-                    <p><strong>Koefisien Determinasi ($R^2$):</strong> <span id="rSquaredResult"></span></p>
-                </div>
-            </section>
-        </main>
-
-        <footer class="footer">
-            <p>&copy; 2025 Ringkasan Regresi Kuadratik. Dibuat berdasarkan video MathemNesus.</p>
-        </footer>
+                <a href="linear-regression.html" class="feature-card">
+                    <h3>Regresi & Korelasi Linier Sederhana</h3>
+                    <p>Pahami hubungan linier antar variabel dan analisis korelasinya.</p>
+                    <span class="button">Lihat Materi</span>
+                </a>
+            </div>
+        </div>
     </div>
-
-    <!-- MathJax for rendering LaTeX formulas -->
-    <script type="text/javascript" async
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-    </script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const xValuesInput = document.getElementById('xValues');
-            const yValuesInput = document.getElementById('yValues');
-            const calculateButton = document.getElementById('calculateRegression');
-            const errorMessageDiv = document.getElementById('errorMessage');
-            const nResultSpan = document.getElementById('nResult');
-            const aResultSpan = document.getElementById('aResult');
-            const bResultSpan = document.getElementById('bResult');
-            const cResultSpan = document.getElementById('cResult');
-            const regressionEquationSpan = document.getElementById('regressionEquation');
-            const rSquaredResultSpan = document.getElementById('rSquaredResult');
-            const resultsDiv = document.getElementById('results');
-
-            // Hide results section initially
-            resultsDiv.style.display = 'none';
-
-            calculateButton.addEventListener('click', calculateQuadraticRegression);
-
-            function showErrorMessage(message) {
-                errorMessageDiv.textContent = message;
-                errorMessageDiv.classList.remove('hidden');
-                resultsDiv.style.display = 'none';
-            }
-
-            function hideErrorMessage() {
-                errorMessageDiv.classList.add('hidden');
-            }
-
-            function parseAndValidateInput(inputString) {
-                return inputString.split(',').map(s => {
-                    const num = parseFloat(s.trim());
-                    if (isNaN(num)) {
-                        throw new Error("Input tidak valid. Pastikan semua nilai adalah angka.");
-                    }
-                    return num;
-                });
-            }
-
-            // Function to calculate determinant of a 3x3 matrix
-            function determinant3x3(matrix) {
-                return (
-                    matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-                    matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-                    matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
-                );
-            }
-
-            function calculateQuadraticRegression() {
-                hideErrorMessage();
-                resultsDiv.style.display = 'none';
-
-                let xData, yData;
-                try {
-                    xData = parseAndValidateInput(xValuesInput.value);
-                    yData = parseAndValidateInput(yValuesInput.value);
-                } catch (error) {
-                    showErrorMessage(error.message);
-                    return;
-                }
-
-                if (xData.length === 0 || yData.length === 0) {
-                    showErrorMessage("Masukkan setidaknya satu pasang nilai X dan Y.");
-                    return;
-                }
-
-                if (xData.length !== yData.length) {
-                    showErrorMessage("Jumlah nilai X dan Y harus sama.");
-                    return;
-                }
-
-                if (xData.length < 3) {
-                    showErrorMessage("Diperlukan setidaknya 3 pasang data untuk regresi kuadratik.");
-                    return;
-                }
-
-                const n = xData.length;
-
-                // Calculate sums
-                let sumX = 0, sumY = 0, sumX2 = 0, sumX3 = 0, sumX4 = 0, sumXY = 0, sumX2Y = 0;
-                let sumY_hat_diff_sq = 0; // Sigma (y - y_hat)^2
-                let sumY_bar_diff_sq = 0; // Sigma (y - y_bar)^2
-
-                for (let i = 0; i < n; i++) {
-                    const x = xData[i];
-                    const y = yData[i];
-
-                    sumX += x;
-                    sumY += y;
-                    sumX2 += x * x;
-                    sumX3 += x * x * x;
-                    sumX4 += x * x * x * x;
-                    sumXY += x * y;
-                    sumX2Y += x * x * y;
-                }
-
-                // Construct matrices for Cramer's Rule
-                const M = [
-                    [n, sumX, sumX2],
-                    [sumX, sumX2, sumX3],
-                    [sumX2, sumX3, sumX4]
-                ];
-
-                const B = [sumY, sumXY, sumX2Y];
-
-                const D = determinant3x3(M);
-
-                if (D === 0) {
-                    showErrorMessage("Determinan matriks adalah nol. Regresi tidak dapat dihitung dengan data ini.");
-                    return;
-                }
-
-                // Calculate Da, Db, Dc
-                const Ma = [
-                    [B[0], M[0][1], M[0][2]],
-                    [B[1], M[1][1], M[1][2]],
-                    [B[2], M[2][1], M[2][2]]
-                ];
-                const Da = determinant3x3(Ma);
-
-                const Mb = [
-                    [M[0][0], B[0], M[0][2]],
-                    [M[1][0], B[1], M[1][2]],
-                    [M[2][0], B[2], M[2][2]]
-                ];
-                const Db = determinant3x3(Mb);
-
-                const Mc = [
-                    [M[0][0], M[0][1], B[0]],
-                    [M[1][0], M[1][1], B[1]],
-                    [M[2][0], M[2][1], B[2]]
-                ];
-                const Dc = determinant3x3(Mc);
-
-                const a = Da / D;
-                const b = Db / D;
-                const c = Dc / D;
-
-                // Calculate R-squared
-                const yBar = sumY / n;
-                for (let i = 0; i < n; i++) {
-                    const x = xData[i];
-                    const y = yData[i];
-                    const yHat = a + b * x + c * x * x;
-
-                    sumY_hat_diff_sq += (y - yHat) * (y - yHat);
-                    sumY_bar_diff_sq += (y - yBar) * (y - yBar);
-                }
-
-                let rSquared = 0;
-                if (sumY_bar_diff_sq !== 0) {
-                    rSquared = 1 - (sumY_hat_diff_sq / sumY_bar_diff_sq);
-                } else {
-                    // Handle case where all y values are the same (y_bar_diff_sq is 0)
-                    rSquared = 1; // Perfect fit if all y values are identical
-                }
-
-                // Display results
-                nResultSpan.textContent = n;
-                aResultSpan.textContent = a.toFixed(4);
-                bResultSpan.textContent = b.toFixed(4);
-                cResultSpan.textContent = c.toFixed(4);
-                regressionEquationSpan.innerHTML = `&hat;y = ${a.toFixed(4)} + ${b.toFixed(4)}x + ${c.toFixed(4)}x<sup>2</sup>`;
-                rSquaredResultSpan.textContent = rSquared.toFixed(4);
-
-                resultsDiv.style.display = 'block'; // Show results section
-            }
-        });
-    </script>
 </body>
 </html>
