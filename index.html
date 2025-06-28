@@ -121,6 +121,38 @@
             color: #64748b; /* Gray text */
             font-size: 0.9rem;
         }
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            background-color: #cbd5e1; /* Placeholder background */
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .video-container iframe,
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-placeholder {
+            display: flex;
+            flex-direction: column; /* Allow text stacking */
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background-color: #e2e8f0;
+            color: #4a5568;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+        }
         /* Mobile responsiveness */
         @media (max-width: 768px) {
             .container {
@@ -144,6 +176,17 @@
         </header>
 
         <main>
+            <section class="card">
+                <h2 class="section-title">Video Pembahasan</h2>
+                <div class="video-container">
+                    <!-- Video from the provided GitHub raw link -->
+                    <video controls src="https://github.com/Eundxipro/statistika/raw/main/XIV.%20Video%20contoh%20Regresi%20Kuadratik%20Metode%20Kuadrat%20Terkecil%20(1).mp4">
+                        Browser Anda tidak mendukung tag video. Silakan unduh video untuk menontonnya:
+                        <a href="https://github.com/Eundxipro/statistika/raw/main/XIV.%20Video%20contoh%20Regresi%20Kuadratik%20Metode%20Kuadrat%20Terkecil%20(1).mp4">Unduh Video</a>
+                    </video>
+                </div>
+            </section>
+
             <section class="card">
                 <h2 class="section-title">Pendahuluan</h2>
                 <p class="text-lg">Regresi Kuadratik adalah metode regresi yang menggunakan fungsi polinomial orde 2 untuk memodelkan hubungan antara variabel independen ($x$) dan variabel dependen ($y$). Bentuk grafiknya menyerupai kurva parabola. Metode ini sangat berguna ketika data yang tersebar menunjukkan pola non-linear.</p>
