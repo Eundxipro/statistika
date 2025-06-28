@@ -153,6 +153,55 @@
             padding: 1rem;
             border-radius: 8px;
         }
+        /* Style for step-by-step results */
+        .step-by-step-results {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none; /* Hidden by default */
+        }
+        .step-by-step-results h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e3a8a;
+        }
+        .step-by-step-results ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+        .step-by-step-results ul li {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+        .step-by-step-results ul li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .step-by-step-results .math-formula {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Canvas specific styles */
+        #regressionCanvas {
+            width: 100%;
+            max-width: 600px; /* Max width for larger screens */
+            height: auto; /* Maintain aspect ratio */
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: block; /* To remove extra space below canvas */
+            margin-left: auto; /* Center the canvas */
+            margin-right: auto; /* Center the canvas */
+        }
+
         /* Mobile responsiveness */
         @media (max-width: 768px) {
             .container {
@@ -361,14 +410,82 @@
                 <button id="calculateRegression" class="button-primary">Hitung Regresi</button>
                 <div id="errorMessage" class="error-message hidden"></div>
 
+                <!-- Step-by-step results section -->
+                <div id="stepByStepResults" class="step-by-step-results">
+                    <h4>Langkah-langkah Perhitungan:</h4>
+                    <ul>
+                        <li>
+                            <p class="font-semibold">Langkah 1: Menghitung Jumlah yang Diperlukan</p>
+                            <p>Setelah mengumpulkan data X dan Y, langkah pertama adalah menghitung berbagai jumlah (sigma) yang dibutuhkan untuk sistem persamaan linear:</p>
+                            <ul class="ml-4">
+                                <li>Jumlah Data (n): <strong><span id="step_n"></span></strong></li>
+                                <li>&Sigma;X: <strong><span id="step_sumX"></span></strong></li>
+                                <li>&Sigma;Y: <strong><span id="step_sumY"></span></strong></li>
+                                <li>&Sigma;X&sup2;: <strong><span id="step_sumX2"></span></strong></li>
+                                <li>&Sigma;X&sup3;: <strong><span id="step_sumX3"></span></strong></li>
+                                <li>&Sigma;X&sup4;: <strong><span id="step_sumX4"></span></strong></li>
+                                <li>&Sigma;XY: <strong><span id="step_sumXY"></span></strong></li>
+                                <li>&Sigma;X&sup2;Y: <strong><span id="step_sumX2Y"></span></strong></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p class="font-semibold">Langkah 2: Membentuk Matriks Sistem Persamaan Linear</p>
+                            <p>Jumlah-jumlah di atas digunakan untuk membentuk matriks koefisien (M) dan vektor konstanta (B) dari sistem persamaan linear:</p>
+                            <p>Matriks Koefisien (M):</p>
+                            <div class="math-formula" id="matrix_M_display">
+                                <!-- MathJax will render this dynamically -->
+                            </div>
+                            <p>Vektor Konstanta (B):</p>
+                            <div class="math-formula" id="vector_B_display">
+                                <!-- MathJax will render this dynamically -->
+                            </div>
+                        </li>
+                        <li>
+                            <p class="font-semibold">Langkah 3: Menghitung Determinan (Menggunakan Aturan Cramer)</p>
+                            <p>Untuk menemukan koefisien (a, b, c), kita perlu menghitung determinan dari matriks M (D) dan determinan dari matriks yang dimodifikasi (Da, Db, Dc):</p>
+                            <ul class="ml-4">
+                                <li>Determinan D: <strong><span id="step_D"></span></strong></li>
+                                <li>Determinan D<sub>a</sub>: <strong><span id="step_Da"></span></strong></li>
+                                <li>Determinan D<sub>b</sub>: <strong><span id="step_Db"></span></strong></li>
+                                <li>Determinan D<sub>c</sub>: <strong><span id="step_Dc"></span></strong></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p class="font-semibold">Langkah 4: Menghitung Koefisien Regresi (a, b, c)</p>
+                            <p>Koefisien dihitung dengan membagi determinan yang sesuai dengan determinan D:</p>
+                            <ul class="ml-4">
+                                <li>Koefisien a = D<sub>a</sub> / D: <strong><span id="step_a_calc"></span></strong></li>
+                                <li>Koefisien b = D<sub>b</sub> / D: <strong><span id="step_b_calc"></span></strong></li>
+                                <li>Koefisien c = D<sub>c</sub> / D: <strong><span id="step_c_calc"></span></strong></li>
+                            </ul>
+                            <p>Sehingga fungsi regresi kuadratik yang ditemukan adalah: <strong id="intermediate_regression_equation"></strong></p>
+                        </li>
+                        <li>
+                            <p class="font-semibold">Langkah 5: Menghitung Koefisien Determinasi (R&sup2;)</p>
+                            <p>R&sup2; mengukur seberapa baik model sesuai dengan data. Perhitungan melibatkan rata-rata Y dan jumlah kuadrat selisih:</p>
+                            <ul class="ml-4">
+                                <li>Rata-rata Y (&bar;y): <strong><span id="step_yBar"></span></strong></li>
+                                <li>&Sigma;(y - &hat;y)&sup2; (Jumlah Kuadrat Sisaan): <strong><span id="step_sumY_hat_diff_sq"></span></strong></li>
+                                <li>&Sigma;(y - &bar;y)&sup2; (Jumlah Kuadrat Total): <strong><span id="step_sumY_bar_diff_sq"></span></strong></li>
+                                <li>R&sup2; = 1 - (&Sigma;(y - &hat;y)&sup2; / &Sigma;(y - &bar;y)&sup2;): <strong><span id="step_rSquared_calc"></span></strong></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
                 <div id="results" class="result-area mt-8 border p-6 rounded-lg bg-blue-50 border-blue-200">
-                    <h3 class="subsection-title">Hasil Perhitungan:</h3>
+                    <h3 class="subsection-title">Hasil Akhir:</h3>
                     <p><strong>Jumlah Data (n):</strong> <span id="nResult"></span></p>
                     <p><strong>Koefisien a:</strong> <span id="aResult"></span></p>
                     <p><strong>Koefisien b:</strong> <span id="bResult"></span></p>
                     <p><strong>Koefisien c:</strong> <span id="cResult"></span></p>
                     <p><strong>Fungsi Regresi ($\hat{y}$):</strong> <span id="regressionEquation"></span></p>
                     <p><strong>Koefisien Determinasi ($R^2$):</strong> <span id="rSquaredResult"></span></p>
+                </div>
+
+                <div id="plotArea" class="mt-8 p-6 bg-white rounded-lg shadow-md" style="display: none;">
+                    <h3 class="subsection-title">Visualisasi Data & Kurva Regresi:</h3>
+                    <canvas id="regressionCanvas" width="600" height="400"></canvas>
                 </div>
             </section>
         </main>
@@ -394,6 +511,8 @@
             const yValuesInput = document.getElementById('yValues');
             const calculateButton = document.getElementById('calculateRegression');
             const errorMessageDiv = document.getElementById('errorMessage');
+            
+            // Final results spans
             const nResultSpan = document.getElementById('nResult');
             const aResultSpan = document.getElementById('aResult');
             const bResultSpan = document.getElementById('bResult');
@@ -402,15 +521,73 @@
             const rSquaredResultSpan = document.getElementById('rSquaredResult');
             const resultsDiv = document.getElementById('results');
 
-            // Hide results section initially
+            // Step-by-step results spans
+            const stepByStepResultsDiv = document.getElementById('stepByStepResults');
+            const step_n = document.getElementById('step_n');
+            const step_sumX = document.getElementById('step_sumX');
+            const step_sumY = document.getElementById('step_sumY');
+            const step_sumX2 = document.getElementById('step_sumX2');
+            const step_sumX3 = document.getElementById('step_sumX3');
+            const step_sumX4 = document.getElementById('step_sumX4');
+            const step_sumXY = document.getElementById('step_sumXY');
+            const step_sumX2Y = document.getElementById('step_sumX2Y');
+
+            const matrix_M_display = document.getElementById('matrix_M_display');
+            const vector_B_display = document.getElementById('vector_B_display');
+
+            const step_D = document.getElementById('step_D');
+            const step_Da = document.getElementById('step_Da');
+            const step_Db = document.getElementById('step_Db');
+            const step_Dc = document.getElementById('step_Dc');
+
+            const step_a_calc = document.getElementById('step_a_calc');
+            const step_b_calc = document.getElementById('step_b_calc');
+            const step_c_calc = document.getElementById('step_c_calc');
+            const intermediate_regression_equation = document.getElementById('intermediate_regression_equation');
+
+
+            const step_yBar = document.getElementById('step_yBar');
+            const step_sumY_hat_diff_sq = document.getElementById('step_sumY_hat_diff_sq');
+            const step_sumY_bar_diff_sq = document.getElementById('step_sumY_bar_diff_sq');
+            const step_rSquared_calc = document.getElementById('step_rSquared_calc');
+
+            // Plotting elements
+            const plotArea = document.getElementById('plotArea');
+            const canvas = document.getElementById('regressionCanvas');
+            const ctx = canvas.getContext('2d');
+            let currentXData = [];
+            let currentYData = [];
+            let currentA, currentB, currentC;
+
+
+            // Hide results sections initially
             resultsDiv.style.display = 'none';
+            stepByStepResultsDiv.style.display = 'none';
+            plotArea.style.display = 'none';
+
 
             calculateButton.addEventListener('click', calculateQuadraticRegression);
+
+            // Function to resize canvas and redraw plot
+            function resizeCanvas() {
+                const parentWidth = canvas.parentElement.clientWidth;
+                canvas.width = Math.min(parentWidth, 600); // Max 600px width
+                canvas.height = canvas.width * (2/3); // Maintain 3:2 aspect ratio
+
+                if (currentXData.length > 0 && currentYData.length > 0) {
+                    drawPlot(currentXData, currentYData, currentA, currentB, currentC);
+                }
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+
 
             function showErrorMessage(message) {
                 errorMessageDiv.textContent = message;
                 errorMessageDiv.classList.remove('hidden');
                 resultsDiv.style.display = 'none';
+                stepByStepResultsDiv.style.display = 'none';
+                plotArea.style.display = 'none';
             }
 
             function hideErrorMessage() {
@@ -439,6 +616,9 @@
             function calculateQuadraticRegression() {
                 hideErrorMessage();
                 resultsDiv.style.display = 'none';
+                stepByStepResultsDiv.style.display = 'none';
+                plotArea.style.display = 'none';
+
 
                 let xData, yData;
                 try {
@@ -468,9 +648,7 @@
 
                 // Calculate sums
                 let sumX = 0, sumY = 0, sumX2 = 0, sumX3 = 0, sumX4 = 0, sumXY = 0, sumX2Y = 0;
-                let sumY_hat_diff_sq = 0; // Sigma (y - y_hat)^2
-                let sumY_bar_diff_sq = 0; // Sigma (y - y_bar)^2
-
+                
                 for (let i = 0; i < n; i++) {
                     const x = xData[i];
                     const y = yData[i];
@@ -526,8 +704,11 @@
                 const b = Db / D;
                 const c = Dc / D;
 
-                // Calculate R-squared
+                // Calculate R-squared components
+                let sumY_hat_diff_sq = 0; // Sigma (y - y_hat)^2
+                let sumY_bar_diff_sq = 0; // Sigma (y - y_bar)^2
                 const yBar = sumY / n;
+
                 for (let i = 0; i < n; i++) {
                     const x = xData[i];
                     const y = yData[i];
@@ -541,11 +722,55 @@
                 if (sumY_bar_diff_sq !== 0) {
                     rSquared = 1 - (sumY_hat_diff_sq / sumY_bar_diff_sq);
                 } else {
-                    // Handle case where all y values are the same (y_bar_diff_sq is 0)
                     rSquared = 1; // Perfect fit if all y values are identical
                 }
 
-                // Display results
+                // Store current data for redrawing on resize
+                currentXData = xData;
+                currentYData = yData;
+                currentA = a;
+                currentB = b;
+                currentC = c;
+
+
+                // Display step-by-step results
+                step_n.textContent = n;
+                step_sumX.textContent = sumX.toFixed(4);
+                step_sumY.textContent = sumY.toFixed(4);
+                step_sumX2.textContent = sumX2.toFixed(4);
+                step_sumX3.textContent = sumX3.toFixed(4);
+                step_sumX4.textContent = sumX4.toFixed(4);
+                step_sumXY.textContent = sumXY.toFixed(4);
+                step_sumX2Y.textContent = sumX2Y.toFixed(4);
+
+                // Update matrix LaTeX strings dynamically
+                matrix_M_display.innerHTML = `
+                    $$ M = \\begin{bmatrix} n & \\Sigma x & \\Sigma x^2 \\\\ \\Sigma x & \\Sigma x^2 & \\Sigma x^3 \\\\ \\Sigma x^2 & \\Sigma x^3 & \\Sigma x^4 \\end{bmatrix} = \\begin{bmatrix} ${n} & ${sumX.toFixed(4)} & ${sumX2.toFixed(4)} \\\\ ${sumX.toFixed(4)} & ${sumX2.toFixed(4)} & ${sumX3.toFixed(4)} \\\\ ${sumX2.toFixed(4)} & ${sumX3.toFixed(4)} & ${sumX4.toFixed(4)} \\end{bmatrix} $$
+                `;
+                vector_B_display.innerHTML = `
+                    $$ B = \\begin{bmatrix} \\Sigma y \\\\ \\Sigma xy \\\\ \\Sigma x^2y \\end{bmatrix} = \\begin{bmatrix} ${sumY.toFixed(4)} \\\\ ${sumXY.toFixed(4)} \\\\ ${sumX2Y.toFixed(4)} \\end{bmatrix} $$
+                `;
+
+
+                step_D.textContent = D.toFixed(4);
+                step_Da.textContent = Da.toFixed(4);
+                step_Db.textContent = Db.toFixed(4);
+                step_Dc.textContent = Dc.toFixed(4);
+
+                step_a_calc.textContent = `${Da.toFixed(4)} / ${D.toFixed(4)} = ${a.toFixed(4)}`;
+                step_b_calc.textContent = `${Db.toFixed(4)} / ${D.toFixed(4)} = ${b.toFixed(4)}`;
+                step_c_calc.textContent = `${Dc.toFixed(4)} / ${D.toFixed(4)} = ${c.toFixed(4)}`;
+                intermediate_regression_equation.innerHTML = `&hat;y = ${a.toFixed(4)} + ${b.toFixed(4)}x + ${c.toFixed(4)}x<sup>2</sup>`;
+
+
+                step_yBar.textContent = yBar.toFixed(4);
+                step_sumY_hat_diff_sq.textContent = sumY_hat_diff_sq.toFixed(4);
+                step_sumY_bar_diff_sq.textContent = sumY_bar_diff_sq.toFixed(4);
+                step_rSquared_calc.textContent = `1 - (${sumY_hat_diff_sq.toFixed(4)} / ${sumY_bar_diff_sq.toFixed(4)}) = ${rSquared.toFixed(4)}`;
+
+                stepByStepResultsDiv.style.display = 'block'; // Show step-by-step results
+
+                // Display final results
                 nResultSpan.textContent = n;
                 aResultSpan.textContent = a.toFixed(4);
                 bResultSpan.textContent = b.toFixed(4);
@@ -553,7 +778,92 @@
                 regressionEquationSpan.innerHTML = `&hat;y = ${a.toFixed(4)} + ${b.toFixed(4)}x + ${c.toFixed(4)}x<sup>2</sup>`;
                 rSquaredResultSpan.textContent = rSquared.toFixed(4);
 
-                resultsDiv.style.display = 'block'; // Show results section
+                resultsDiv.style.display = 'block'; // Show final results section
+                plotArea.style.display = 'block'; // Show plot area
+
+                // Initial canvas resizing and plot drawing
+                resizeCanvas();
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, "stepByStepResults"]);
+            }
+
+            // --- Plotting Logic ---
+            function drawPlot(xData, yData, a, b, c) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+                const padding = 40; // Padding for axes
+                const chartWidth = canvas.width - 2 * padding;
+                const chartHeight = canvas.height - 2 * padding;
+
+                // Find min/max for scaling
+                const minX = Math.min(...xData);
+                const maxX = Math.max(...xData);
+                const minY = Math.min(...yData);
+                const maxY = Math.max(...yData);
+
+                // Add some margin to the min/max values for better visualization
+                const dataRangeX = maxX - minX;
+                const dataRangeY = maxY - minY;
+                const paddedMinX = minX - dataRangeX * 0.1;
+                const paddedMaxX = maxX + dataRangeX * 0.1;
+                const paddedMinY = minY - dataRangeY * 0.1;
+                const paddedMaxY = maxY + dataRangeY * 0.1;
+
+                const scaleX = chartWidth / (paddedMaxX - paddedMinX);
+                const scaleY = chartHeight / (paddedMaxY - paddedMinY);
+
+                // Function to transform data coordinates to canvas coordinates
+                function toCanvasX(val) {
+                    return padding + (val - paddedMinX) * scaleX;
+                }
+
+                function toCanvasY(val) {
+                    return canvas.height - padding - (val - paddedMinY) * scaleY;
+                }
+
+                // Draw Axes
+                ctx.beginPath();
+                ctx.strokeStyle = '#64748b'; // Gray for axes
+                ctx.lineWidth = 2;
+                // X-axis
+                ctx.moveTo(padding, toCanvasY(paddedMinY));
+                ctx.lineTo(padding + chartWidth, toCanvasY(paddedMinY));
+                // Y-axis
+                ctx.moveTo(padding, toCanvasY(paddedMinY));
+                ctx.lineTo(padding, toCanvasY(paddedMaxY));
+                ctx.stroke();
+
+                // Draw axis labels and ticks (simplified)
+                ctx.fillStyle = '#334155';
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('X', padding + chartWidth / 2, canvas.height - 10);
+                ctx.textAlign = 'left';
+                ctx.fillText('Y', 10, padding + chartHeight / 2);
+
+                // Draw scatter points
+                ctx.fillStyle = '#ef4444'; // Red for scatter points
+                xData.forEach((x, i) => {
+                    ctx.beginPath();
+                    ctx.arc(toCanvasX(x), toCanvasY(yData[i]), 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Draw quadratic regression curve
+                ctx.beginPath();
+                ctx.strokeStyle = '#3b82f6'; // Blue for regression curve
+                ctx.lineWidth = 3;
+
+                // Draw curve by sampling points across the X range
+                const step = (paddedMaxX - paddedMinX) / 100; // 100 steps for smoothness
+                for (let x = paddedMinX; x <= paddedMaxX; x += step) {
+                    const yHat = a + b * x + c * x * x;
+                    if (x === paddedMinX) {
+                        ctx.moveTo(toCanvasX(x), toCanvasY(yHat));
+                    } else {
+                        ctx.lineTo(toCanvasX(x), toCanvasY(yHat));
+                    }
+                }
+                ctx.stroke();
             }
         });
     </script>
