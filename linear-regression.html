@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regresi & Korelasi Linier Sederhana</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            color: #334155; /* Dark slate gray text */
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .section-title {
+            font-size: 2.25rem; /* 36px */
+            font-weight: 700; /* Bold */
+            color: #1e3a8a; /* Darker blue */
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #60a5fa; /* Blue accent underline */
+            padding-bottom: 0.5rem;
+        }
+        .subsection-title {
+            font-size: 1.75rem; /* 28px */
+            font-weight: 600; /* Semi-bold */
+            color: #3b82f6; /* Medium blue */
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .math-formula {
+            background-color: #e0f2fe; /* Lightest blue */
+            border-left: 5px solid #3b82f6; /* Blue border */
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif; /* Maintain Inter font */
+            font-size: 1.125rem; /* 18px */
+            color: #1e40af; /* Dark blue for formula */
+            overflow-x: auto; /* Allow horizontal scrolling for long formulas */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        th, td {
+            border: 1px solid #cbd5e1; /* Light gray border */
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #bfdbfe; /* Lighter blue for table headers */
+            font-weight: 600;
+            color: #1e40af; /* Dark blue for table header text */
+        }
+        td {
+            background-color: #eff6ff; /* Even lighter blue for table cells */
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        .button-primary {
+            background-color: #3b82f6; /* Blue */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .button-primary:hover {
+            background-color: #2563eb; /* Darker blue on hover */
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            background-color: #cbd5e1; /* Placeholder background */
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .video-container iframe,
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b; /* Gray text */
+            font-size: 0.9rem;
+        }
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .section-title {
+                font-size: 1.75rem;
+            }
+            .subsection-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center py-8">
+            <h1 class="text-5xl font-extrabold text-blue-900 leading-tight">Regresi & Korelasi Linier Sederhana</h1>
+            <p class="text-lg text-blue-700 mt-2">Materi dari Statistika Terapan Minggu XIII oleh I. N. RAI</p>
+            <a href="index.html" class="button-primary mt-6 inline-block">Kembali ke Dashboard</a>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2 class="section-title">Pengertian & Tujuan</h2>
+                <p class="text-lg">Analisis regresi dan korelasi sama-sama mengkaji dan mengukur keterkaitan secara statistik antara dua atau lebih peubah (variabel). Keduanya mengukur derajat hubungan antar peubah yang bersifat korelasional.</p>
+                <p class="mt-4 text-lg">Tujuan mempelajari Regresi dan Korelasi adalah untuk mempelajari hubungan antar peubah sebagai dasar untuk penaksiran atau peramalan dari hubungan antar peubah tersebut.</p>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Perbedaan Regresi dan Korelasi</h2>
+                <h3 class="subsection-title">Regresi</h3>
+                <ul>
+                    <li>Mengukur hubungan 2 peubah atau lebih, dinyatakan dengan **BENTUK HUBUNGAN**.</li>
+                    <li>Datanya harus kuantitatif (terukur dan terhitung).</li>
+                    <li>Membutuhkan pemisahan tegas antara peubah bebas (X) dan peubah tak bebas (Y).</li>
+                    <li>Harus jelas ada ketergantungan satu peubah dengan yang lainnya.</li>
+                    <li>Persamaan umum: $Y=f(X)$.</li>
+                </ul>
+                <h3 class="subsection-title">Korelasi</h3>
+                <ul>
+                    <li>Mengukur hubungan 2 peubah atau lebih, dinyatakan dengan **DERAJAT KEERATAN** atau tingkat hubungan antar peubah.</li>
+                    <li>Derajat keeratan hubungan diukur dengan Koefisien Korelasi (simbol $r$), sedangkan indeks korelasi diberi simbol $R$.</li>
+                    <li>Koefisien korelasi tidak menuntut adanya ketergantungan satu peubah dengan yang lainnya.</li>
+                    <li>Dapat dipakai untuk mencari hubungan antara peubah bebas dengan tak bebas, atau antar peubah tak bebas.</li>
+                    <li>Penting: antar peubah yang dikorelasikan harus mempunyai kaitan atau relevansi.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Koefisien Korelasi ($r$) dan Determinasi ($r^2$ atau $R^2$)</h2>
+                <ul>
+                    <li>Koefisien korelasi $r$ hanya dipakai untuk menyatakan keeratan hubungan yang bersifat linier sederhana.</li>
+                    <li>Indeks korelasi $R$ untuk menyatakan keeratan hubungan pada bentuk non-linier.</li>
+                    <li>$r^2$ atau $R^2$ sering disebut sebagai Koefisien Determinasi ($D$).</li>
+                    <li>Nilai $r^2$ menunjukkan persentase peubah tak bebas Y dipengaruhi oleh peubah bebas X, sedangkan sisanya $1 - r^2$ tidak dipengaruhi oleh peubah bebas X.</li>
+                    <li>Jika nilai $r$ negatif, maka nilai koefisien regresi $b$ juga negatif, dan sebaliknya.</li>
+                </ul>
+                <h3 class="subsection-title">Interpretasi Koefisien Korelasi ($r$)</h3>
+                <ul>
+                    <li>$r < 0.4$: Lemah</li>
+                    <li>$0.4 < r < 0.8$: Sedang</li>
+                    <li>$r > 0.8$: Kuat</li>
+                </ul>
+                <p class="mt-4 text-lg font-bold">Penting:</p>
+                <ul>
+                    <li>Korelasi tidak selalu berarti hubungan sebab-akibat (causality).</li>
+                    <li>Korelasi yang lemah tidak selalu berarti tidak adanya hubungan.</li>
+                    <li>Korelasi yang kuat tidak selalu berarti adanya garis lurus.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Jenis Hubungan Antara 2 Variabel</h2>
+                <ol class="list-decimal ml-6">
+                    <li>
+                        <p class="text-lg font-semibold">Hubungan searah/positif (Linier positif)</p>
+                        <ul>
+                            <li>Perubahan variabel X (independent/BEBAS) akan mempengaruhi variabel Y (dependent/TAK BEBAS) secara searah.</li>
+                            <li>Jika X bertambah, maka Y bertambah pula, dan sebaliknya.</li>
+                            <li>Contoh: Hubungan antara penghasilan (X) dan pengeluaran konsumsi (Y).</li>
+                            <li></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p class="text-lg font-semibold">Hubungan bersifat kebalikan/negatif (Linier negatif)</p>
+                        <ul>
+                            <li>Apabila peubah X bertambah, maka peubah Y berkurang atau sebaliknya, jika peubah X berkurang maka peubah Y bertambah.</li>
+                            <li>Contoh: Hubungan antara usia kendaraan (X) dengan tingkat harga (Y).</li>
+                            <li></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <p class="text-lg font-semibold">Tidak ada hubungan</p>
+                        <ul>
+                            <li>Perubahan pada variabel independen (X) tidak mempengaruhi perubahan pada variabel dependen (Y).</li>
+                            <li>Contoh: Hubungan antara konsumsi pangan (X) dengan tingginya gedung (Y).</li>
+                        </ul>
+                    </li>
+                </ol>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Jenis-Jenis Garis Regresi</h2>
+                <h3 class="subsection-title">A. Regresi Linier</h3>
+                <ul>
+                    <li>Bentuk hubungan di mana peubah bebas X hanya sebagai faktor yang berpangkat satu.</li>
+                    <li>Regresi Linier sederhana: $Y=a+bX$</li>
+                    <li>Regresi Linier Berganda: $Y=b_{0}+b_{1}X_{1}+b_{2}X_{2}+....+b_{n}X_{n}$</li>
+                </ul>
+                <h3 class="subsection-title">B. Regresi Non Linier</h3>
+                <ul>
+                    <li>Bentuk hubungan di mana peubah bebas X dan peubah tak bebas Y dapat sebagai faktor dengan pangkat tertentu, peubah X dapat sebagai pecahan, atau peubah X dan Y dapat berfungsi sebagai pangkat.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Regresi Linier Sederhana</h2>
+                <p class="text-lg">Model regresi linier sederhana yang paling dasar adalah:</p>
+                <div class="math-formula">
+                    $$ Y_{c}=a+bX $$
+                </div>
+                <p class="text-lg">Di mana:
+                    <ul>
+                        <li>$Y_c$ adalah nilai variabel tak bebas yang dihitung dari persamaan regresi.</li>
+                        <li>$a$ (intersepsi) adalah nilai $Y_c$ bila $X=0$.</li>
+                        <li>$b$ (slope) adalah perubahan nilai $Y$ untuk setiap perubahan $X$ sebesar satu satuan unit.</li>
+                        <li>$X$ adalah nilai variabel bebas.</li>
+                    </ul>
+                </p>
+                <h3 class="subsection-title">Rumus Koefisien Regresi ($a$ dan $b$)</h3>
+                <p class="text-lg">Slope ($b$):</p>
+                <div class="math-formula">
+                    $$ b=\frac{(\Sigma XY)-\frac{(\Sigma X).(\Sigma Y)}{n}}{(\Sigma X^{2})-\frac{(\Sigma X)^{2}}{n}} $$
+                </div>
+                <p class="text-lg">Intersepsi ($a$):</p>
+                <div class="math-formula">
+                    $$ a=\overline{Y}-b\overline{X} $$
+                </div>
+                <p class="text-lg">Di mana $\overline{X} = \frac{\Sigma X}{n}$ dan $\overline{Y} = \frac{\Sigma Y}{n}$.</p>
+
+                <h3 class="subsection-title">Contoh Soal Regresi Linier Sederhana (Pengaruh Iklan terhadap Penjualan)</h3>
+                <p class="text-lg">Data:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subjek</th>
+                            <th>Penjualan (X)</th>
+                            <th>Promosi (Y)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>20</td><td>5</td></tr>
+                        <tr><td>2</td><td>30</td><td>6</td></tr>
+                        <tr><td>3</td><td>25</td><td>5</td></tr>
+                        <tr><td>4</td><td>35</td><td>7</td></tr>
+                        <tr><td>5</td><td>40</td><td>8</td></tr>
+                    </tbody>
+                </table>
+                <p class="text-lg">Hasil Perhitungan:</p>
+                <ul>
+                    <li>$\Sigma X = 150$</li>
+                    <li>$\Sigma Y = 31$</li>
+                    <li>$\Sigma XY = 970$</li>
+                    <li>$\Sigma X^2 = 22500$</li>
+                    <li>$\Sigma Y^2 = 961$</li>
+                </ul>
+                <p class="text-lg">Perhitungan $b$:</p>
+                <div class="math-formula">
+                    $$ b=\frac{970 \times 5 - 150 \times 31}{22500 \times 5 - (150)^2} = 0.0022 $$
+                </div>
+                <p class="text-lg">Perhitungan $a$:</p>
+                <div class="math-formula">
+                    $$ \overline{X} = \frac{150}{5} = 30 $$
+                    $$ \overline{Y} = \frac{31}{5} = 6.2 $$
+                    $$ a = 6.2 - 0.0022(30) = 6.134 $$
+                </div>
+                <p class="text-lg">Persamaan Regresi: $\hat{Y} = 6.134 + 0.0022X$</p>
+                <p class="text-lg">Kesimpulan: Banyaknya promosi berpengaruh positif terhadap penjualan. Penjualan meningkat sebesar 0.0022 per satu kali promosi, dengan estimasi penjualan awal 6.134.</p>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Korelasi Linier Sederhana</h2>
+                <h3 class="subsection-title">Rumus Koefisien Korelasi ($r$)</h3>
+                <div class="math-formula">
+                    $$ r=\frac{n(\Sigma XY)-(\Sigma X)(\Sigma Y)}{\sqrt{[n(\Sigma X^{2})-(\Sigma X)^{2}][n(\Sigma Y^{2})-(\Sigma Y)^{2}]}} $$
+                </div>
+                <h3 class="subsection-title">Contoh Soal Korelasi Sederhana (Promosi vs Penjualan)</h3>
+                <p class="text-lg">Menggunakan data yang sama dari contoh regresi linier sederhana:</p>
+                <ul>
+                    <li>$\Sigma X = 150$</li>
+                    <li>$\Sigma Y = 31$</li>
+                    <li>$\Sigma XY = 970$</li>
+                    <li>$\Sigma X^2 = 22500$</li>
+                    <li>$\Sigma Y^2 = 961$</li>
+                    <li>$n=5$</li>
+                </ul>
+                <p class="text-lg">Perhitungan $r$:</p>
+                <div class="math-formula">
+                    $$ r=\frac{5(970)-(150)(31)}{\sqrt{[5(22500)-(150)^2][5(961)-(31)^2]}} = 0.0108 $$
+                </div>
+                <p class="text-lg">Kesimpulan: Nilai koefisien korelasi $r = 0.0108$ menunjukkan hubungan yang **lemah** antara variabel promosi dan hasil penjualan.</p>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Uji Garis Regresi</h2>
+                <p class="text-lg">Setelah mendapatkan persamaan garis regresi, perlu dilakukan UJI GARIS REGRESI untuk memastikan apakah garis tersebut sudah baik untuk melakukan pendugaan. Metode pengujian meliputi:</p>
+                <ol class="list-decimal ml-6">
+                    <li>Uji Ragam Garis Regresi (Uji F)</li>
+                    <li>Uji Koefisien Garis Regresi (Uji T)</li>
+                    <li>Uji Kecocokan Garis Regresi</li>
+                    <li>Uji Keeratan Hubungan Garis Regresi</li>
+                </ol>
+            </section>
+
+            <section class="card">
+                <h2 class="section-title">Interpolasi dan Ekstrapolasi</h2>
+                <p class="text-lg">Dalam peramalan menggunakan garis regresi, penting memahami dua konsep:</p>
+                <ul>
+                    <li><strong>Interpolasi:</strong> Penaksiran nilai-nilai Y pada rentang nilai X yang **dicoba (dalam jangkauan data)**.</li>
+                    <li><strong>Ekstrapolasi:</strong> Penaksiran nilai-nilai Y pada rentang nilai X yang **di luar jangkauan data yang dicoba**.</li>
+                </ul>
+                <p class="mt-4"></p>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Ringkasan Regresi & Korelasi. Dibuat berdasarkan materi Statistika Terapan.</p>
+        </footer>
+    </div>
+
+    <!-- MathJax for rendering LaTeX formulas -->
+    <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
+</body>
+</html>
+
