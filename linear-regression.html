@@ -94,6 +94,33 @@
         .button-primary:hover {
             background-color: #2563eb; /* Darker blue on hover */
         }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .result-area p {
+            margin-bottom: 0.5rem;
+        }
+        .error-message {
+            color: #ef4444; /* Red color for error messages */
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b; /* Gray text */
+            font-size: 0.9rem;
+        }
         .video-container {
             position: relative;
             width: 100%;
@@ -113,12 +140,56 @@
             height: 100%;
             border: none;
         }
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: #64748b; /* Gray text */
-            font-size: 0.9rem;
+
+        /* Style for step-by-step results */
+        .step-by-step-results {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            display: none; /* Hidden by default */
         }
+        .step-by-step-results h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e3a8a;
+        }
+        .step-by-step-results ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+        .step-by-step-results ul li {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+        .step-by-step-results ul li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .step-by-step-results .math-formula {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Canvas specific styles */
+        #regressionCanvas {
+            width: 100%;
+            max-width: 600px; /* Max width for larger screens */
+            height: auto; /* Maintain aspect ratio */
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: block; /* To remove extra space below canvas */
+            margin-left: auto; /* Center the canvas */
+            margin-right: auto; /* Center the canvas */
+        }
+
         /* Mobile responsiveness */
         @media (max-width: 768px) {
             .container {
@@ -139,6 +210,7 @@
             <h1 class="text-5xl font-extrabold text-blue-900 leading-tight">Regresi & Korelasi Linier Sederhana</h1>
             <p class="text-lg text-blue-700 mt-2">Materi dari Statistika Terapan Minggu XIII oleh I. N. RAI</p>
             <a href="index.html" class="button-primary mt-6 inline-block">Kembali ke Dashboard</a>
+            <a href="#uji-coba-section" class="button-primary mt-6 inline-block">Mulai Uji Coba Regresi Anda</a>
         </header>
 
         <main>
@@ -164,7 +236,7 @@
                     <li>Derajat keeratan hubungan diukur dengan Koefisien Korelasi (simbol $r$), sedangkan indeks korelasi diberi simbol $R$.</li>
                     <li>Koefisien korelasi tidak menuntut adanya ketergantungan satu peubah dengan yang lainnya.</li>
                     <li>Dapat dipakai untuk mencari hubungan antara peubah bebas dengan tak bebas, atau antar peubah tak bebas.</li>
-                    <li>Penting: antar peubah yang dikorelasikan harus mempunyai kaitan atau relevansi.</li>
+                    <li>Penting: antar peubah yang dikorelasikan harus mempunyai kaitan atau relevansi. Jangan sekali kali mengkorelasikan, tetapi sama sekali tak ada kaaitannya.</li>
                 </ul>
             </section>
 
@@ -343,6 +415,77 @@
                 </ul>
                 <p class="mt-4"></p>
             </section>
+
+            <section id="uji-coba-section" class="card">
+                <h2 class="section-title">Uji Coba Regresi & Korelasi Linier Sederhana</h2>
+                <p class="text-lg mb-4">Masukkan data $X$ dan $Y$ Anda (pisahkan dengan koma), lalu klik "Hitung" untuk melihat proses perhitungan dan hasilnya.</p>
+                <div class="form-group">
+                    <label for="xValues">Nilai X (contoh: 20,30,25,35,40):</label>
+                    <textarea id="xValues" rows="3" placeholder="Masukkan nilai X dipisahkan dengan koma"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="yValues">Nilai Y (contoh: 5,6,5,7,8):</label>
+                    <textarea id="yValues" rows="3" placeholder="Masukkan nilai Y dipisahkan dengan koma"></textarea>
+                </div>
+                <button id="calculateRegression" class="button-primary">Hitung Regresi & Korelasi</button>
+                <div id="errorMessage" class="error-message hidden"></div>
+
+                <!-- Step-by-step results section -->
+                <div id="stepByStepResults" class="step-by-step-results">
+                    <h4>Langkah-langkah Perhitungan:</h4>
+                    <ul>
+                        <li>
+                            <p class="font-semibold">Langkah 1: Menghitung Jumlah yang Diperlukan</p>
+                            <p>Setelah mengumpulkan data X dan Y, langkah pertama adalah menghitung berbagai jumlah (sigma) yang dibutuhkan:</p>
+                            <ul class="ml-4">
+                                <li>Jumlah Data (n): <strong><span id="step_n"></span></strong></li>
+                                <li>&Sigma;X: <strong><span id="step_sumX"></span></strong></li>
+                                <li>&Sigma;Y: <strong><span id="step_sumY"></span></strong></li>
+                                <li>&Sigma;XY: <strong><span id="step_sumXY"></span></strong></li>
+                                <li>&Sigma;X&sup2;: <strong><span id="step_sumX2"></span></strong></li>
+                                <li>&Sigma;Y&sup2;: <strong><span id="step_sumY2"></span></strong></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p class="font-semibold">Langkah 2: Menghitung Koefisien Regresi (b dan a)</p>
+                            <p>Pertama, hitung slope ($b$), kemudian intersep ($a$):</p>
+                            <p>Slope ($b$):</p>
+                            <div class="math-formula">
+                                $$ b=\frac{(\Sigma XY)-\frac{(\Sigma X).(\Sigma Y)}{n}}{(\Sigma X^{2})-\frac{(\Sigma X)^{2}}{n}} = \frac{<span id="b_numerator_val"></span>}{<span id="b_denominator_val"></span>} = <span id="step_b_calc"></span> $$
+                            </div>
+                            <p>Rata-rata X ($\overline{X}$): <strong><span id="step_xBar"></span></strong></p>
+                            <p>Rata-rata Y ($\overline{Y}$): <strong><span id="step_yBar"></span></strong></p>
+                            <p>Intersep ($a$):</p>
+                            <div class="math-formula">
+                                $$ a=\overline{Y}-b\overline{X} = <span id="a_calc_val1"></span> - (<span id="a_calc_val2"></span> \times <span id="a_calc_val3"></span>) = <span id="step_a_calc"></span> $$
+                            </div>
+                            <p>Sehingga persamaan regresi linier adalah: <strong id="intermediate_regression_equation"></strong></p>
+                        </li>
+                        <li>
+                            <p class="font-semibold">Langkah 3: Menghitung Koefisien Korelasi (r)</p>
+                            <p>Koefisien korelasi ($r$) mengukur kekuatan dan arah hubungan linier:</p>
+                            <div class="math-formula">
+                                $$ r=\frac{n(\Sigma XY)-(\Sigma X)(\Sigma Y)}{\sqrt{[n(\Sigma X^{2})-(\Sigma X)^{2}][n(\Sigma Y^{2})-(\Sigma Y)^{2}]}} = \frac{<span id="r_numerator_val"></span>}{\sqrt{<span id="r_denominator_val"></span>}} = <span id="step_r_calc"></span> $$
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="results" class="result-area mt-8 border p-6 rounded-lg bg-blue-50 border-blue-200">
+                    <h3 class="subsection-title">Hasil Akhir:</h3>
+                    <p><strong>Jumlah Data (n):</strong> <span id="nResult"></span></p>
+                    <p><strong>Koefisien Intersep (a):</strong> <span id="aResult"></span></p>
+                    <p><strong>Koefisien Slope (b):</strong> <span id="bResult"></span></p>
+                    <p><strong>Persamaan Regresi Linier ($\hat{Y}$):</strong> <span id="regressionEquation"></span></p>
+                    <p><strong>Koefisien Korelasi (r):</strong> <span id="rResult"></span></p>
+                    <p><strong>Interpretasi Korelasi:</strong> <span id="rInterpretation"></span></p>
+                </div>
+
+                <div id="plotArea" class="mt-8 p-6 bg-white rounded-lg shadow-md" style="display: none;">
+                    <h3 class="subsection-title">Visualisasi Data & Garis Regresi:</h3>
+                    <canvas id="regressionCanvas" width="600" height="400"></canvas>
+                </div>
+            </section>
         </main>
 
         <footer class="footer">
@@ -359,6 +502,308 @@
             tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const xValuesInput = document.getElementById('xValues');
+            const yValuesInput = document.getElementById('yValues');
+            const calculateButton = document.getElementById('calculateRegression');
+            const errorMessageDiv = document.getElementById('errorMessage');
+
+            // Final results spans
+            const nResultSpan = document.getElementById('nResult');
+            const aResultSpan = document.getElementById('aResult');
+            const bResultSpan = document.getElementById('bResult');
+            const regressionEquationSpan = document.getElementById('regressionEquation');
+            const rResultSpan = document.getElementById('rResult');
+            const rInterpretationSpan = document.getElementById('rInterpretation');
+            const resultsDiv = document.getElementById('results');
+
+            // Step-by-step results spans
+            const stepByStepResultsDiv = document.getElementById('stepByStepResults');
+            const step_n = document.getElementById('step_n');
+            const step_sumX = document.getElementById('step_sumX');
+            const step_sumY = document.getElementById('step_sumY');
+            const step_sumXY = document.getElementById('step_sumXY');
+            const step_sumX2 = document.getElementById('step_sumX2');
+            const step_sumY2 = document.getElementById('step_sumY2');
+
+            const b_numerator_val = document.getElementById('b_numerator_val');
+            const b_denominator_val = document.getElementById('b_denominator_val');
+            const step_b_calc = document.getElementById('step_b_calc');
+
+            const step_xBar = document.getElementById('step_xBar');
+            const step_yBar = document.getElementById('step_yBar');
+            const a_calc_val1 = document.getElementById('a_calc_val1');
+            const a_calc_val2 = document.getElementById('a_calc_val2');
+            const a_calc_val3 = document.getElementById('a_calc_val3');
+            const step_a_calc = document.getElementById('step_a_calc');
+            const intermediate_regression_equation = document.getElementById('intermediate_regression_equation');
+
+            const r_numerator_val = document.getElementById('r_numerator_val');
+            const r_denominator_val = document.getElementById('r_denominator_val');
+            const step_r_calc = document.getElementById('step_r_calc');
+
+            // Plotting elements
+            const plotArea = document.getElementById('plotArea');
+            const canvas = document.getElementById('regressionCanvas');
+            const ctx = canvas.getContext('2d');
+            let currentXData = [];
+            let currentYData = [];
+            let currentA, currentB;
+
+            // Hide results sections initially
+            resultsDiv.style.display = 'none';
+            stepByStepResultsDiv.style.display = 'none';
+            plotArea.style.display = 'none';
+
+            calculateButton.addEventListener('click', calculateLinearRegression);
+
+            // Function to resize canvas and redraw plot
+            function resizeCanvas() {
+                const parentWidth = canvas.parentElement.clientWidth;
+                canvas.width = Math.min(parentWidth, 600); // Max 600px width
+                canvas.height = canvas.width * (2/3); // Maintain 3:2 aspect ratio
+
+                if (currentXData.length > 0 && currentYData.length > 0) {
+                    drawPlot(currentXData, currentYData, currentA, currentB);
+                }
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+
+            function showErrorMessage(message) {
+                errorMessageDiv.textContent = message;
+                errorMessageDiv.classList.remove('hidden');
+                resultsDiv.style.display = 'none';
+                stepByStepResultsDiv.style.display = 'none';
+                plotArea.style.display = 'none';
+            }
+
+            function hideErrorMessage() {
+                errorMessageDiv.classList.add('hidden');
+            }
+
+            function parseAndValidateInput(inputString) {
+                return inputString.split(',').map(s => {
+                    const num = parseFloat(s.trim());
+                    if (isNaN(num)) {
+                        throw new Error("Input tidak valid. Pastikan semua nilai adalah angka.");
+                    }
+                    return num;
+                });
+            }
+
+            function interpretCorrelation(r) {
+                const absR = Math.abs(r);
+                if (absR < 0.4) {
+                    return "Lemah";
+                } else if (absR < 0.8) {
+                    return "Sedang";
+                } else {
+                    return "Kuat";
+                }
+            }
+
+            function calculateLinearRegression() {
+                hideErrorMessage();
+                resultsDiv.style.display = 'none';
+                stepByStepResultsDiv.style.display = 'none';
+                plotArea.style.display = 'none';
+
+                let xData, yData;
+                try {
+                    xData = parseAndValidateInput(xValuesInput.value);
+                    yData = parseAndValidateInput(yValuesInput.value);
+                } catch (error) {
+                    showErrorMessage(error.message);
+                    return;
+                }
+
+                if (xData.length === 0 || yData.length === 0) {
+                    showErrorMessage("Masukkan setidaknya satu pasang nilai X dan Y.");
+                    return;
+                }
+
+                if (xData.length !== yData.length) {
+                    showErrorMessage("Jumlah nilai X dan Y harus sama.");
+                    return;
+                }
+
+                if (xData.length < 2) {
+                    showErrorMessage("Diperlukan setidaknya 2 pasang data untuk regresi linier.");
+                    return;
+                }
+
+                const n = xData.length;
+
+                // Calculate sums
+                let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+
+                for (let i = 0; i < n; i++) {
+                    const x = xData[i];
+                    const y = yData[i];
+
+                    sumX += x;
+                    sumY += y;
+                    sumXY += x * y;
+                    sumX2 += x * x;
+                    sumY2 += y * y;
+                }
+
+                // Calculate slope (b)
+                const b_numerator = (n * sumXY) - (sumX * sumY);
+                const b_denominator = (n * sumX2) - (sumX * sumX);
+                let b = 0;
+                if (b_denominator === 0) {
+                    showErrorMessage("Pembagi untuk perhitungan slope (b) adalah nol. Variabel X mungkin konstan.");
+                    return;
+                }
+                b = b_numerator / b_denominator;
+
+                // Calculate intercepts (a)
+                const xBar = sumX / n;
+                const yBar = sumY / n;
+                const a = yBar - (b * xBar);
+
+                // Calculate correlation coefficient (r)
+                const r_numerator = (n * sumXY) - (sumX * sumY);
+                const r_denominator_part1 = (n * sumX2) - (sumX * sumX);
+                const r_denominator_part2 = (n * sumY2) - (sumY * sumY);
+                let r = 0;
+                const r_denominator = Math.sqrt(r_denominator_part1 * r_denominator_part2);
+
+                if (r_denominator === 0) {
+                    r = (r_numerator === 0) ? 1 : 0; // If both constant, perfect correlation, else 0.
+                } else {
+                    r = r_numerator / r_denominator;
+                }
+
+                // Store current data for redrawing on resize
+                currentXData = xData;
+                currentYData = yData;
+                currentA = a;
+                currentB = b;
+
+                // Display step-by-step results
+                step_n.textContent = n;
+                step_sumX.textContent = sumX.toFixed(4);
+                step_sumY.textContent = sumY.toFixed(4);
+                step_sumXY.textContent = sumXY.toFixed(4);
+                step_sumX2.textContent = sumX2.toFixed(4);
+                step_sumY2.textContent = sumY2.toFixed(4);
+
+                b_numerator_val.textContent = `${n}*${sumXY.toFixed(4)} - ${sumX.toFixed(4)}*${sumY.toFixed(4)}`;
+                b_denominator_val.textContent = `${n}*${sumX2.toFixed(4)} - (${sumX.toFixed(4)})^2`;
+                step_b_calc.textContent = b.toFixed(4);
+
+                step_xBar.textContent = xBar.toFixed(4);
+                step_yBar.textContent = yBar.toFixed(4);
+                a_calc_val1.textContent = yBar.toFixed(4);
+                a_calc_val2.textContent = b.toFixed(4);
+                a_calc_val3.textContent = xBar.toFixed(4);
+                step_a_calc.textContent = a.toFixed(4);
+                intermediate_regression_equation.innerHTML = `&hat;Y = ${a.toFixed(4)} + ${b.toFixed(4)}X`;
+
+                r_numerator_val.textContent = `${n}*${sumXY.toFixed(4)} - ${sumX.toFixed(4)}*${sumY.toFixed(4)}`;
+                r_denominator_val.textContent = `[${n}*${sumX2.toFixed(4)} - (${sumX.toFixed(4)})^2] * [${n}*${sumY2.toFixed(4)} - (${sumY.toFixed(4)})^2]`;
+                step_r_calc.textContent = r.toFixed(4);
+
+                stepByStepResultsDiv.style.display = 'block'; // Show step-by-step results
+
+                // Display final results
+                nResultSpan.textContent = n;
+                aResultSpan.textContent = a.toFixed(4);
+                bResultSpan.textContent = b.toFixed(4);
+                regressionEquationSpan.innerHTML = `&hat;Y = ${a.toFixed(4)} + ${b.toFixed(4)}X`;
+                rResultSpan.textContent = r.toFixed(4);
+                rInterpretationSpan.textContent = interpretCorrelation(r);
+
+                resultsDiv.style.display = 'block'; // Show final results section
+                plotArea.style.display = 'block'; // Show plot area
+
+                // Initial canvas resizing and plot drawing
+                resizeCanvas();
+                // Ensure MathJax renders the new content
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, "stepByStepResults"]);
+            }
+
+            // --- Plotting Logic ---
+            function drawPlot(xData, yData, a, b) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+                const padding = 40; // Padding for axes
+                const chartWidth = canvas.width - 2 * padding;
+                const chartHeight = canvas.height - 2 * padding;
+
+                // Find min/max for scaling
+                const minX = Math.min(...xData);
+                const maxX = Math.max(...xData);
+                const minY = Math.min(...yData);
+                const maxY = Math.max(...yData);
+
+                // Add some margin to the min/max values for better visualization
+                const dataRangeX = maxX - minX;
+                const dataRangeY = maxY - minY;
+                const paddedMinX = minX - dataRangeX * 0.1;
+                const paddedMaxX = maxX + dataRangeX * 0.1;
+                const paddedMinY = minY - dataRangeY * 0.1;
+                const paddedMaxY = maxY + dataRangeY * 0.1;
+
+                const scaleX = chartWidth / (paddedMaxX - paddedMinX);
+                const scaleY = chartHeight / (paddedMaxY - paddedMinY);
+
+                // Function to transform data coordinates to canvas coordinates
+                function toCanvasX(val) {
+                    return padding + (val - paddedMinX) * scaleX;
+                }
+
+                function toCanvasY(val) {
+                    return canvas.height - padding - (val - paddedMinY) * scaleY;
+                }
+
+                // Draw Axes
+                ctx.beginPath();
+                ctx.strokeStyle = '#64748b'; // Gray for axes
+                ctx.lineWidth = 2;
+                // X-axis
+                ctx.moveTo(padding, toCanvasY(paddedMinY));
+                ctx.lineTo(padding + chartWidth, toCanvasY(paddedMinY));
+                // Y-axis
+                ctx.moveTo(padding, toCanvasY(paddedMinY));
+                ctx.lineTo(padding, toCanvasY(paddedMaxY));
+                ctx.stroke();
+
+                // Draw axis labels and ticks (simplified)
+                ctx.fillStyle = '#334155';
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('X', padding + chartWidth / 2, canvas.height - 10);
+                ctx.textAlign = 'left';
+                ctx.fillText('Y', 10, padding + chartHeight / 2);
+
+                // Draw scatter points
+                ctx.fillStyle = '#ef4444'; // Red for scatter points
+                xData.forEach((x, i) => {
+                    ctx.beginPath();
+                    ctx.arc(toCanvasX(x), toCanvasY(yData[i]), 4, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Draw linear regression line
+                ctx.beginPath();
+                ctx.strokeStyle = '#3b82f6'; // Blue for regression line
+                ctx.lineWidth = 3;
+
+                // Calculate Y values for the line at min and max X of the plot
+                const yStart = a + b * paddedMinX;
+                const yEnd = a + b * paddedMaxX;
+
+                ctx.moveTo(toCanvasX(paddedMinX), toCanvasY(yStart));
+                ctx.lineTo(toCanvasX(paddedMaxX), toCanvasY(yEnd));
+                ctx.stroke();
+            }
+        });
+    </script>
 </body>
 </html>
-
